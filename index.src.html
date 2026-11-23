@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Fake Famous</title>
+<meta name="description" content="Stage a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one. Nothing is broadcast.">
+<meta property="og:title" content="35,000 people are watching you. Nobody is.">
+<meta property="og:description" content="Fake Famous stages a simulated livestream with a scripted crowd in 12 languages. Runs in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!--
+  SETUP CHECKLIST (all settings live in the CONFIG object near the bottom of this file)
+  1. Put your influencer clip at assets/hero.mp4 (vertical 9:16, under 6 MB, H.264) and a still frame at assets/hero-poster.jpg.
+  2. Paddle: add your client-side token and the two price IDs. Start with environment "sandbox".
+  3. Set showVideoHint to false once the video is in.
+  4. Replace the legal link targets and support email in the footer.
+  Design source: colors, fonts and UI patterns are taken from the live app (black base, #17171A cards, Anton wordmark, Inter, red/orange gradient).
+-->
+
+<style>
+/* Layout idea: poster headline plus one live phone on the right, then the app's own panels
+   (layout, tones, sliders, script, languages, pre-live sheet) rebuilt as working demos. */
+:root{
+  --black:#000000;
+  --card:#17171A;
+  --sheet:#1B1A1F;
+  --lift:#26262C;
+  --line:rgba(255,255,255,.08);
+  --text:#FFFFFF;
+  --mute:rgba(255,255,255,.66);
+  --dim:rgba(255,255,255,.44);
+  --red:#F0284A;
+  --brand:#E50914;
+  --orange:#FF8812;
+  --green:#1FC27E;
+  --blue:#1D9BF0;
+  --grad:linear-gradient(90deg,#EF2D47,#FF8812);
+  --display:'Anton','Arial Narrow',Impact,sans-serif;
+  --body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --gutter:clamp(16px,4vw,40px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;background:var(--black)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--black);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}
+h1,h2,h3,p{margin:0}
+h1,h2{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.01em;line-height:1;text-wrap:balance}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 max(var(--gutter),env(safe-area-inset-left)) 0 max(var(--gutter),env(safe-area-inset-right))}
+.studio>*,.col>*,.pgrid>*{min-width:0}
+@media (min-width:1600px){.wrap{max-width:1360px}body{font-size:17px}}
+@media (min-width:2200px){.wrap{max-width:1560px}}
+
+/* Header */
+.top{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
+.mark{font-family:var(--display);font-size:30px;line-height:1;text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
+.mark b{font-weight:400;color:var(--brand)}
+.mark small{display:block;font:500 11px var(--body);text-transform:none;letter-spacing:0;color:var(--mute);margin-top:4px}
+.nav{display:flex;align-items:center;gap:26px;font-weight:600;font-size:15px}
+.nav a{text-decoration:none;color:var(--mute)}
+.nav a:hover{color:var(--text)}
+@media (max-width:760px){.nav .link{display:none}}
+
+/* Buttons: white pills like the app, gradient for the main action */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 16px/1 var(--body);min-height:52px;padding:0 28px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;transition:transform .15s,filter .15s}
+@media (hover:hover){.btn:hover{transform:translateY(-2px)}}
+.btn.white{background:#fff;color:#111}
+.btn.grad{background:var(--grad);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 12px 28px -10px rgba(240,40,74,.7)}
+.btn:active{transform:scale(.98)}
+.btn.line{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}
+.btn.line:hover{box-shadow:inset 0 0 0 1.5px #fff}
+.btn.small{padding:0 20px;font-size:14px;min-height:44px}
+
+/* Cards, segmented tabs, toggles */
+.panel h3{font:700 16px/1.2 var(--body);letter-spacing:-.01em}
+.panel .sub{font-size:13px;color:var(--dim);margin-top:4px}
+.val{color:var(--red);font-weight:800;font-variant-numeric:tabular-nums}
+.seg{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{flex:1;font:700 14px var(--body);color:var(--mute);background:none;border:0;border-radius:999px;padding:10px 16px;min-height:40px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:#000;color:#fff;box-shadow:inset 0 0 0 1px var(--line)}
+.opt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 12px;text-align:center;color:#fff;font-family:var(--body);cursor:pointer;position:relative;transition:border-color .15s}
+@media (hover:hover){.opt:hover{border-color:rgba(255,255,255,.3)}}
+.opt[aria-pressed="true"]{border-color:#fff}
+.opt b{display:block;font-size:16px;margin-top:6px}
+.opt span{display:block;font-size:12.5px;color:var(--mute);margin-top:2px}
+.opt .mk{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35)}
+.opt[aria-pressed="true"] .mk{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4l2.6 2.6L13 6.5' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px;border-color:#fff}
+.opt span.emo{font-size:28px;line-height:1.1;color:inherit;margin:0 0 2px}
+.tog{position:relative;width:46px;height:28px;border-radius:999px;border:0;background:#3B3B3B;cursor:pointer;flex:none;transition:background .15s}
+.tog::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .15s}
+.tog::before{content:"";position:absolute;inset:-8px -4px}
+.tog[aria-checked="true"]{background:var(--green)}
+.tog[aria-checked="true"]::after{transform:translateX(18px)}
+
+/* Studio: copy and controls scroll on the left, one live phone stays pinned on the right */
+.studio{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);column-gap:clamp(40px,7vw,112px);align-items:start}
+.hero{padding:clamp(48px,9vh,104px) 0 clamp(56px,9vh,96px)}
+.hero h1{font-size:clamp(46px,5.9vw,88px);line-height:1.02;font-variant-numeric:tabular-nums}
+.lede{margin-top:28px;max-width:30em;font-size:clamp(17px,1.4vw,20px);line-height:1.6;color:var(--mute)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.fine{margin-top:16px;font-size:14px;color:var(--dim)}
+.assure{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);max-width:34em;font-size:13px;line-height:1.55;color:var(--dim)}
+.assure i{width:7px;height:7px;border-radius:50%;background:var(--red);display:inline-block;margin-right:9px;vertical-align:1px}
+.blocks{display:block}
+.block{padding:clamp(48px,7vh,80px) 0;border-top:1px solid var(--line)}
+.block:last-child{padding-bottom:clamp(56px,9vh,96px)}
+.block .copy{margin-bottom:28px}
+.block h2{font-size:clamp(32px,3.5vw,46px)}
+.block .copy p{margin-top:14px;max-width:32em;color:var(--mute);font-size:17px;line-height:1.6}
+@media (max-width:960px){
+  .studio{grid-template-columns:minmax(0,1fr)}
+  .col{display:contents}
+  .hero{order:1;padding-bottom:40px}
+  .stage{order:2;position:relative!important;top:auto!important;margin-bottom:24px}
+  .blocks{order:3}
+  .phone{width:min(320px,100%)!important}
+}
+@media (max-width:480px){.hero{padding-top:28px}.cta-row .btn{flex:1 1 100%}.assure{margin-top:32px}}
+
+/* Phone */
+.stage{display:flex;flex-direction:column;align-items:center;gap:16px;position:sticky;top:92px;align-self:start;padding-bottom:8px}
+.stage::before{content:"";position:absolute;inset:8% 0 22%;background:radial-gradient(closest-side,rgba(240,40,74,.3),transparent 72%);filter:blur(34px)}
+.stage .seg{position:relative;width:100%;max-width:340px}
+.phone{container-type:inline-size;position:relative;width:clamp(264px,calc((100vh - 290px) * .4893),340px);aspect-ratio:9/18.4;border-radius:46px;background:#0b0b0d;padding:9px;box-shadow:0 0 0 1.5px #2e2e35,0 40px 70px -26px rgba(240,40,74,.45)}
+.screen{position:relative;width:100%;height:100%;border-radius:38px;overflow:hidden;background:
+  radial-gradient(60% 38% at 28% 22%,#5a6bc0 0,transparent 62%),
+  radial-gradient(46% 34% at 78% 62%,rgba(240,40,74,.6) 0,transparent 66%),
+  radial-gradient(70% 40% at 40% 92%,#3a3f78 0,transparent 70%),#1d2147}
+.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 22%,transparent 48%,rgba(0,0,0,.8));pointer-events:none}
+.hud{position:absolute;top:13px;left:12px;right:12px;display:flex;align-items:center;gap:8px;color:#fff}
+.avatar{width:34px;height:34px;flex:none;border-radius:50%;background:var(--grad);display:grid;place-items:center;font:400 17px var(--display);border:2px solid #fff}
+.nm{font-weight:700;font-size:13px;line-height:1.15;display:flex;align-items:center;gap:4px}
+.who small{display:block;font-size:11px;opacity:.8}
+.vf{flex:none}
+.livebadge{margin-left:auto;background:var(--grad);font-weight:800;font-size:11px;letter-spacing:.03em;padding:5px 9px;border-radius:7px}
+.pill{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);padding:5px 9px;border-radius:7px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.x{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.4);display:grid;place-items:center}
+.cap{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border-radius:999px;padding:4px 6px 4px 4px}
+.cap .avatar{width:30px;height:30px;font-size:15px;border-width:0}
+.cap .who{font-size:12px}
+.follow{background:var(--red);border-radius:999px;font-weight:800;font-size:11px;padding:6px 10px;margin-left:2px}
+.hud.tt .cap{flex:1;min-width:0}
+.hud.tt .x{display:none}
+.hud.tt .who{min-width:0}
+.gifters{position:absolute;top:50px;right:12px;display:flex}
+.gifters i{width:24px;height:24px;border-radius:50%;margin-left:-6px;border:2px solid #FFC93C;background:#6b6f9a;display:block}
+.gifters i:nth-child(2){border-color:#d5d9e3}
+.gifters i:nth-child(3){border-color:#d98b4a}
+.side{position:absolute;right:10px;top:62px;display:flex;flex-direction:column;gap:10px}
+.side i{width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.4);display:grid;place-items:center}
+.don{position:absolute;left:12px;top:56px;background:rgba(0,0,0,.5);border-radius:999px;padding:4px 10px;font-weight:800;font-size:12px;color:#FFC93C;font-variant-numeric:tabular-nums}
+.chat{position:absolute;left:12px;right:56px;bottom:62px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;max-height:50%;overflow:hidden}
+.msg{width:fit-content;max-width:100%;font-size:13px;line-height:1.3;background:rgba(0,0,0,.42);padding:6px 11px;border-radius:14px;animation:in .2s ease-out;overflow-wrap:anywhere}
+.msg b{font-weight:700;opacity:.8;margin-right:6px}
+.msg.gift{background:rgba(240,40,74,.9)}
+.msg.join{background:none;padding-left:2px;font-size:12px;opacity:.8}
+.msg .d1{display:inline-block;vertical-align:-2px;margin-right:4px}
+@keyframes in{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.hearts{position:absolute;right:10px;bottom:64px;width:44px;height:230px;pointer-events:none}
+.heart{position:absolute;bottom:0;right:8px;width:22px;height:22px;animation:rise 2.4s ease-out forwards}
+@keyframes rise{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,0),-210px) scale(1.1);opacity:0}}
+.say{position:absolute;left:12px;right:12px;bottom:13px;display:flex;align-items:center;gap:8px}
+.say span{flex:1;border:1.5px solid rgba(255,255,255,.5);border-radius:999px;padding:9px 14px;font-size:13px;color:rgba(255,255,255,.8)}
+.say i{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
+.say i.gift{background:var(--red)}
+.zap{position:absolute;right:10px;bottom:60px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);display:grid;place-items:center;color:#FFC93C}
+.screen[data-layout="ig"] .tt,.screen[data-layout="tt"] .ig{display:none}
+.screen[data-verified="0"] .vf{display:none}
+.screen[data-crowd="0"] .zap{display:none}
+.screen[data-don="0"] .don{display:none}
+.vhint{position:absolute;top:180px;left:16px;right:56px;text-align:center;font-size:12px;font-weight:600;background:rgba(0,0,0,.6);border:1.5px dashed rgba(255,255,255,.6);padding:10px;border-radius:12px}
+.snd{position:absolute;top:104px;left:12px;font:700 12px var(--body);color:#fff;background:rgba(0,0,0,.55);border:0;border-radius:999px;padding:7px 12px;cursor:pointer}
+
+@container (max-width:290px){.hud .x,.hud .who small{display:none}.hud{gap:6px}.livebadge{padding:4px 7px}.pill{padding:4px 7px}.msg{font-size:12px}}
+
+/* Crowd controls tray */
+.tray{position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:360px}
+.chip{font:600 13.5px/1 var(--body);padding:10px 14px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--lift);color:#fff;cursor:pointer;transition:border-color .15s,transform .15s}
+@media (hover:hover){.chip:hover{border-color:rgba(255,255,255,.5);transform:translateY(-2px)}}
+.chip[aria-pressed="true"]{background:#fff;color:#111}
+
+/* Sections */
+section.band{padding:clamp(64px,9vw,120px) 0}
+h2{font-size:clamp(32px,3.6vw,48px)}
+.stack{display:grid;gap:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px}
+.pad{padding:20px 22px}
+.slide{padding:18px 22px}
+.slide + .slide{border-top:1px solid var(--line)}
+.slide .sub{font-size:13px;color:var(--dim);margin-top:2px}
+
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tones{grid-template-columns:repeat(auto-fit,minmax(168px,1fr))}
+.opt.wide{padding:18px 12px}
+.lab{font-weight:600;font-size:14px;color:var(--mute);margin:6px 0 -2px}
+.lab small{display:block;font-weight:400;font-size:12.5px;color:var(--dim)}
+
+/* Sliders (red fill, white track like the app) */
+.slide .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:6px;border-radius:6px;margin:16px 0 8px;background:linear-gradient(to right,var(--red) var(--v,50%),#fff var(--v,50%));cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--red);border:0;box-shadow:0 0 0 4px rgba(240,40,74,.25)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--red);border:0}
+input[type=range]::-moz-range-track{background:transparent}
+
+/* Script + timeline */
+textarea{width:100%;min-height:92px;margin-top:12px;background:var(--lift);color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:500 14px/1.6 var(--body);resize:vertical}
+textarea::placeholder{color:var(--dim)}
+.track{position:relative;height:6px;border-radius:6px;background:var(--lift);margin:28px 0 10px}
+.track i{position:absolute;top:-5px;width:4px;height:16px;border-radius:3px;background:var(--red);transform:translateX(-50%)}
+.ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
+.moments{display:grid;gap:6px;margin-top:14px}
+.moments div{display:flex;gap:10px;font-size:14px;background:var(--lift);border-radius:10px;padding:8px 12px;overflow-wrap:anywhere}
+.moments time{color:var(--red);font-weight:800;font-variant-numeric:tabular-nums}
+
+/* Languages */
+.langs{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.langs .chip{padding:12px 8px;text-align:center;font-size:15px}
+.bubble{margin-top:16px;padding:22px;border-radius:14px;background:var(--lift);font-weight:800;font-size:clamp(22px,3vw,30px);line-height:1.2;min-height:96px;display:flex;align-items:center;letter-spacing:-.01em}
+.bubble small{display:block;font:500 13px var(--body);color:var(--dim);margin-top:6px;letter-spacing:0}
+
+/* Before you start sheet */
+.sheet{max-width:520px;background:var(--sheet);border-radius:24px;padding:22px 18px 18px;border:1px solid var(--line)}
+.sheet h3{font:800 26px/1.1 var(--body);letter-spacing:-.02em}
+.sheet .intro{font-size:13.5px;margin:8px 0 14px;color:var(--text)}
+.sheet .intro b{color:var(--red)}
+.srow{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.srow .ic{width:24px;height:24px;flex:none;display:grid;place-items:center;border-radius:6px}
+.srow .t{flex:1;min-width:0}
+.srow .t b{display:block;font-size:15px}
+.srow .t small{display:block;font-size:11.5px;color:var(--dim);line-height:1.35}
+.srow .seg{padding:3px}
+.srow .seg button{padding:6px 11px;font-size:12px}
+.sheet .note{text-align:center;font-size:12.5px;color:var(--dim);margin:12px 0}
+.sheet .btn{width:100%;font-size:17px;min-height:56px}
+
+/* Pricing */
+.price-band{background:#0b0b0d;border-block:1px solid var(--line)}
+.pgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(16px,3vw,28px);margin-top:44px;align-items:stretch}
+@media (max-width:860px){.pgrid{grid-template-columns:minmax(0,1fr)}.pbox.pro{order:-1}}
+.pbox{border-radius:22px;padding:clamp(22px,3vw,34px);display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line)}
+.pbox.pro{background:linear-gradient(var(--card),var(--card)) padding-box,var(--grad) border-box;border:2px solid transparent}
+.plan-name{font:800 20px var(--body)}
+.pro .seg{align-self:flex-start;margin-top:14px;background:#000}
+.big{display:flex;align-items:baseline;gap:8px;margin:16px 0 4px}
+.big strong{font:400 clamp(54px,6vw,76px)/1 var(--display);font-variant-numeric:tabular-nums}
+.big span{font-weight:600;color:var(--mute)}
+.note2{font-size:14.5px;color:var(--mute);min-height:24px}
+.save{background:var(--grad);color:#fff;font-size:11px;font-weight:800;padding:3px 7px;border-radius:999px;margin-left:6px}
+.list{list-style:none;margin:22px 0 26px;padding:0;display:grid;gap:11px}
+.list li{display:flex;gap:11px;align-items:flex-start;font-size:15.5px}
+.list li::before{content:"";flex:none;width:18px;height:18px;margin-top:2px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4l2.6 2.6L13 6.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat}
+.list li.off{color:var(--dim)}
+.list li.off::before{background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5.5 9h7' stroke='%23777' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") center/18px no-repeat;border:1.5px solid #4a4a52}
+.pbox .btn{margin-top:auto;width:100%}
+.how{background:transparent;border-style:dashed}
+.steps{list-style:none;counter-reset:st;margin:26px 0 0;padding:0;display:grid;gap:0}
+.steps li{counter-increment:st;display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:14px;padding:18px 0;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0;padding-top:0}
+.steps li::before{content:counter(st);grid-row:span 2;font:400 34px/1 var(--display);color:var(--red)}
+.steps b{font-size:16px}
+.steps span{color:var(--mute);font-size:15px;line-height:1.5;margin-top:2px}
+.steps em{font-style:normal;color:var(--text);font-weight:700}
+.fineprint{margin-top:auto;padding-top:20px;font-size:13px;color:var(--dim);line-height:1.5}
+dialog .sum + .sum{margin-top:8px}
+.secure{margin-top:14px;font-size:13px;color:var(--dim);text-align:center}
+.err{margin-top:12px;font-size:14px;color:#ff8a9b;min-height:20px}
+
+/* FAQ */
+.faqgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr);gap:clamp(32px,6vw,96px);align-items:start}
+@media (max-width:860px){.faqgrid{grid-template-columns:minmax(0,1fr)}}
+.faq{margin-top:0}
+details:first-child{border-top:0;padding-top:0}
+details{border-top:1px solid var(--line);padding:20px 0}
+details:last-child{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font:700 18px var(--body);list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:26px;line-height:1;color:var(--red);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin-top:12px;color:var(--mute);max-width:40em}
+
+/* Finale */
+.finale{background:radial-gradient(60% 120% at 80% 100%,rgba(240,40,74,.35),transparent 70%),var(--black);border-top:1px solid var(--line)}
+.finale h2{font-size:clamp(40px,7vw,104px);max-width:11em;line-height:1.02}
+.finale .cta-row{margin-top:34px}
+
+/* Footer */
+footer{padding:34px 0 56px;font-size:14px;color:var(--dim)}
+footer .wrap{display:grid;gap:14px}
+footer nav{display:flex;flex-wrap:wrap;gap:6px 22px}
+footer a{color:var(--mute);font-weight:600}
+footer a.mark{color:var(--text);font-weight:400;text-decoration:none}
+
+/* Dialogs */
+dialog{border:1px solid var(--line);border-radius:24px;padding:28px;max-width:min(440px,92vw);background:var(--sheet);color:#fff;box-shadow:0 30px 80px rgba(0,0,0,.7)}
+dialog::backdrop{background:rgba(0,0,0,.75)}
+dialog h3{font:800 24px/1.15 var(--body);letter-spacing:-.02em}
+dialog p{margin-top:12px;color:var(--mute)}
+dialog .sum{margin-top:18px;padding:14px 16px;background:var(--card);border-radius:12px;display:flex;justify-content:space-between;font-weight:700}
+dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+
+/* Touch screens: bigger sliders and switches */
+@media (pointer:coarse){
+  input[type=range]{height:8px;margin:22px 0 14px}
+  input[type=range]::-webkit-slider-thumb{width:26px;height:26px}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px}
+  .tog{width:52px;height:32px}
+  .tog::after{width:26px;height:26px}
+  .tog[aria-checked="true"]::after{transform:translateX(20px)}
+}
+
+/* Phones and small tablets */
+@media (max-width:600px){
+  section.band{padding:56px 0}
+  .block h2,h2{font-size:clamp(30px,9vw,40px)}
+  .block .copy p{font-size:16px}
+  .pad,.slide{padding:16px}
+  .opt{padding:14px 8px}
+  .opt span:not(.emo){font-size:12px}
+  .srow{flex-wrap:wrap}
+  .srow .seg{flex:1 1 100%}
+  .pbox{padding:22px 18px}
+  .finale h2{font-size:clamp(38px,11.5vw,56px)}
+  .finale .cta-row .btn{flex:1 1 100%}
+  .bar{height:60px}
+  .mark{font-size:24px}
+  footer nav{gap:10px 20px}
+  .bubble{min-height:84px;padding:18px}
+}
+@media (max-width:360px){
+  .hud.ig .x,.who small{display:none}
+  .hud{gap:6px}
+  .tray{gap:6px}
+  .chip{padding:10px 12px}
+  #tones{grid-template-columns:minmax(0,1fr)}
+  .langs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero h1{font-size:42px}
+}
+
+/* Sticky start button on phones, shown after the hero and hidden near other calls to action */
+.sticky{display:none;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px max(16px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));background:linear-gradient(to top,#000 55%,rgba(0,0,0,0))}
+.sticky .btn{width:100%}
+@media (max-width:720px){.sticky.on{display:block}}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap bar">
+    <a class="mark" href="#top" aria-label="Fake Famous home"><b>Fake</b> Famous</a>
+    <nav class="nav" aria-label="Main">
+      <a class="link" href="#features">Features</a>
+      <a class="link" href="#pricing">Pricing</a>
+      <a class="link" href="#faq">FAQ</a>
+      <a class="btn white small" href="#pricing">Free trial</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap studio">
+    <div class="col">
+      <div class="hero">
+        <h1><span id="count">35,500</span> people are watching you. Nobody is.</h1>
+        <p class="lede">Fake Famous stages a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one.</p>
+        <div class="cta-row" id="heroCta">
+          <a class="btn grad" href="#pricing">Start 3-day free trial</a>
+          <a class="btn line" href="#features">See what you get</a>
+        </div>
+        <p class="fine">Card required. Cancel before day 3 and you pay nothing. Works on iPhone, Android and desktop.</p>
+        <p class="assure"><i></i>Simulated stream. Nothing is broadcast and no real viewers are involved. Not affiliated with Instagram, TikTok or Meta.</p>
+      </div>
+
+  <div id="features" class="blocks">
+
+      <section class="block">
+          <div class="copy"><h2>Pick your layout and your crowd</h2><p>Choose an Instagram or TikTok style live screen, then mix the audience. Pick as many tones as you like and the comments blend between them. The phone follows every choice.</p></div>
+          <div class="stack">
+          <div>
+            <div class="lab">Layout style<small>Matches the real live screen of the app you pick.</small></div>
+            <div class="two" style="margin-top:12px">
+              <button class="opt wide" type="button" data-layout="ig" aria-pressed="true"><b>Instagram</b><span>Live badge, side camera controls</span></button>
+              <button class="opt wide" type="button" data-layout="tt" aria-pressed="false"><b>TikTok</b><span>Host capsule, top gifters, gift bar</span></button>
+            </div>
+          </div>
+          <div>
+            <div class="lab">Audience tone<small>Pick as many as you like. Comments mix between them.</small></div>
+            <div class="two tones" id="tones" style="margin-top:12px">
+              <button class="opt" type="button" data-tone="hater" aria-pressed="false"><i class="mk"></i><span class="emo">😠</span><b>Hater</b><span>Receive mean or rude comments</span></button>
+              <button class="opt" type="button" data-tone="hype" aria-pressed="true"><i class="mk"></i><span class="emo">🏎️💰</span><b>Hype</b><span>Fans hype you up nonstop</span></button>
+              <button class="opt" type="button" data-tone="happy" aria-pressed="false"><i class="mk"></i><span class="emo">🙂</span><b>Happy</b><span>Positive and cheerful comments</span></button>
+              <button class="opt" type="button" data-tone="flirty" aria-pressed="false"><i class="mk"></i><span class="emo">😉</span><b>Flirty</b><span>Fans flirt with you</span></button>
+              <button class="opt" type="button" data-tone="funny" aria-pressed="false"><i class="mk"></i><span class="emo">😂</span><b>Funny</b><span>Jokes and playful comments</span></button>
+              <button class="opt" type="button" data-tone="curious" aria-pressed="false"><i class="mk"></i><span class="emo">❓</span><b>Curious</b><span>Fans ask you questions</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+          <div class="copy"><h2>Set the numbers</h2><p>Choose how many viewers are watching, where the donations start, how often gifts land and how many likes you have. Once you're live the counters keep drifting on their own.</p></div>
+          <div class="panel">
+          <div class="slide"><div class="head"><h3>Viewers watching</h3><span class="val" id="vViews">35,500</span></div>
+            <input type="range" id="sViews" min="1000" max="500000" step="500" value="35500" aria-label="Viewers watching">
+            <p class="sub">The viewer counter. It drifts up and down on its own while you are live.</p></div>
+          <div class="slide"><div class="head"><h3>Starting donations</h3><span class="val" id="vDon">$305</span></div>
+            <input type="range" id="sDon" min="0" max="5000" step="5" value="305" aria-label="Starting donations">
+            <p class="sub">Climbs on its own every time a gift lands.</p></div>
+          <div class="slide"><div class="head"><h3>Gift frequency</h3><span class="val" id="vGift">Normal</span></div>
+            <input type="range" id="sGift" min="1" max="3" step="1" value="2" aria-label="Gift frequency">
+            <p class="sub">How often fans send gifts.</p></div>
+          <div class="slide"><div class="head"><h3>Starting like count</h3><span class="val" id="vLike">18K</span></div>
+            <input type="range" id="sLike" min="1000" max="1000000" step="1000" value="18000" aria-label="Starting like count">
+            <p class="sub">Shown under your name in the TikTok layout.</p></div>
+        </div>
+      </section>
+
+      <section class="block">
+          <div class="copy"><h2>Script the stream</h2><p>Write one comment per line with a time, like 0:20, and add @name to choose who says it. Plan moments on a timeline up to 5:00 and they run on their own after you go live. Save each setup as a preset.</p></div>
+          <div class="panel pad">
+          <div class="head" style="display:flex;justify-content:space-between"><h3>Scripted comments</h3><span class="val" id="lines">Lines: 3</span></div>
+          <p class="sub">One per line: the time after you go live, then the comment. Add @name to choose who says it.</p>
+          <textarea id="script" aria-label="Scripted comments" spellcheck="false">0:20 hiii just got here
+1:05 @mia_k what song is this?
+2:30 this is so good</textarea>
+          <div class="head" style="display:flex;justify-content:space-between;margin-top:22px"><h3>Stream timeline</h3><span class="val" id="planned">3 planned</span></div>
+          <div class="track" id="track" aria-hidden="true"></div>
+          <div class="ticks" aria-hidden="true"><span>0:00</span><span>1:00</span><span>2:00</span><span>3:00</span><span>4:00</span><span>5:00</span></div>
+          <div class="moments" id="moments"></div>
+        </div>
+      </section>
+
+      <section class="block">
+          <div class="copy"><h2>12 languages</h2><p>Your fake fans chat in the language you choose. Tap one and the phone switches with it. All 12 are included from the first day of your trial.</p></div>
+          <div class="panel pad">
+          <div class="langs" id="langs" role="group" aria-label="Chat language"></div>
+          <div class="bubble" id="bubble"></div>
+        </div>
+      </section>
+
+      <section class="block">
+          <div class="copy"><h2>Everything before you go live</h2><p>One sheet covers the verified badge, audience donations, layout, recording, a 3-2-1 countdown, Day Ones and an optional crowd controls button. Flip them and watch the phone.</p></div>
+          <div class="sheet">
+          <h3>Before You Start</h3>
+          <p class="intro">Your live will have up to <b>36K</b> viewers.</p>
+          <div class="srow"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.4l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div class="t"><b>Get Verified!</b></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Get Verified" data-sw="verified"></button></div>
+          <div class="srow"><span class="ic" style="background:#E56900"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/></svg></span><div class="t"><b>Audience Donations</b></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Audience donations" data-sw="donations"></button></div>
+          <div class="srow"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span><div class="t"><b>Layout</b></div>
+            <div class="seg" role="group" aria-label="Layout"><button type="button" data-layout="ig" aria-pressed="true">Instagram</button><button type="button" data-layout="tt" aria-pressed="false">TikTok</button></div></div>
+          <div class="srow"><span class="ic" style="background:#E56900;border-radius:50%"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#fff"/></svg></span><div class="t"><b>Record</b><small>Saves the video with comments and hearts</small></div><button class="tog" type="button" role="switch" aria-checked="false" aria-label="Record" data-sw="record"></button></div>
+          <div class="srow"><span class="ic" style="background:#1D6FE0;font:800 13px var(--body)">3</span><div class="t"><b>Countdown</b><small>Shows 3-2-1 before your live starts.</small></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Countdown" data-sw="countdown"></button></div>
+          <div class="srow"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E0202B"><path d="M12 21s-7.500-4.600-9.600-9.300C.9 8.300 2.700 5 6 5c2 0 3.300 1.100 4 2.300C10.700 6.100 12 5 14 5c3.300 0 5.100 3.300 3.600 6.700C19.500 16.400 12 21 12 21z"/></svg></span><div class="t"><b>Day Ones</b><small>Fans wear a pink heart badge and sometimes join your club on screen.</small></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Day Ones" data-sw="dayones"></button></div>
+          <div class="srow"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="#FFC93C"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></span><div class="t"><b>Crowd controls button</b><small>Adds a small bolt button to the live screen. Leave it off when others are watching.</small></div><button class="tog" type="button" role="switch" aria-checked="false" aria-label="Crowd controls button" data-sw="crowd"></button></div>
+          <p class="note">Simulated audience. No one can see you.</p>
+          <a class="btn grad" href="#pricing">Go Live</a>
+        </div>
+      </section>
+      </div>
+    </div>
+<aside class="stage" aria-label="Live preview">
+        <div class="seg" role="group" aria-label="Layout style">
+          <button type="button" data-layout="ig" aria-pressed="true">Instagram</button>
+          <button type="button" data-layout="tt" aria-pressed="false">TikTok</button>
+        </div>
+        <div class="phone" role="img" aria-label="A Fake Famous simulated livestream with fans chatting">
+          <div class="screen" id="screen" data-layout="ig" data-verified="1" data-crowd="0" data-don="1">
+            <video id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.jpg">
+              <source src="assets/hero.mp4" type="video/mp4">
+            </video>
+            <div class="scrim"></div>
+
+            <div class="hud ig" aria-hidden="true">
+              <div class="avatar">F</div>
+              <div class="who"><div class="nm">you.live <svg class="vf" width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.4l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><small>Live</small></div>
+              <div class="livebadge">LIVE</div>
+              <div class="pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv">35.5K</span></div>
+              <div class="x"><svg width="12" height="12" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
+            </div>
+            <div class="side ig" aria-hidden="true">
+              <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-3l-2-2H9L7 7H4a1 1 0 00-1 1v10a1 1 0 001 1h16a1 1 0 001-1V8a1 1 0 00-1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></i>
+              <i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg></i>
+              <i><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg></i>
+            </div>
+
+            <div class="hud tt" aria-hidden="true">
+              <div class="cap"><div class="avatar">F</div><div class="who"><div class="nm">you.live <svg class="vf" width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.4l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><small><span id="lk">18.3K</span> likes</small></div><span class="follow">Follow</span></div>
+              <div class="gifters"><i></i><i></i><i></i></div>
+              <div class="pill"><span class="pv">35.5K</span></div>
+              <div class="x"><svg width="12" height="12" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
+            </div>
+            <div class="don tt" aria-hidden="true">$<span id="don">305</span></div>
+
+            <button class="snd" id="soundBtn" type="button" hidden aria-pressed="false">Tap for sound</button>
+            <div class="vhint" id="videoHint" hidden>Video slot: add assets/hero.mp4 and assets/hero-poster.jpg</div>
+            <div class="chat" id="chat" aria-hidden="true"></div>
+            <div class="hearts" id="hearts" aria-hidden="true"></div>
+            <div class="zap" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+            <div class="say ig" aria-hidden="true"><span>Add a comment</span><i><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></i></div>
+            <div class="say tt" aria-hidden="true"><span>Say hi</span><i class="gift"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M7.500 8a2.500 2.500 0 010-5C10 3 12 8 12 8s2-5 4.500-5a2.500 2.500 0 010 5"/></svg></i></div>
+          </div>
+        </div>
+        <div class="tray" role="group" aria-label="Crowd controls">
+          <button class="chip" type="button" data-act="hype">Hype wave</button>
+          <button class="chip" type="button" data-act="gift">Gift rain</button>
+          <button class="chip" type="button" data-act="surge">Viewer surge</button>
+          <button class="chip" type="button" data-act="join">Fans join</button>
+          <button class="chip" type="button" data-act="slow" aria-pressed="false">Slow chat</button>
+        </div>
+      </aside>
+  </div>
+
+  <section id="pricing" class="price-band band">
+    <div class="wrap">
+      <h2>Try everything free for 3 days.</h2>
+      <div class="pgrid">
+        <div class="pbox how">
+          <div class="plan-name">How the trial works</div>
+          <ol class="steps">
+            <li><b>Today</b><span>Pick a plan and add a card. You are charged nothing now.</span></li>
+            <li><b>Days 1 to 3</b><span>Full access: every language, no stream limit, no watermark. Cancel in one click and you never pay.</span></li>
+            <li><b>Day 4</b><span>Your plan starts automatically at <em id="thenPrice">€3.99 a month</em>. Cancel any time after that too.</span></li>
+          </ol>
+          <p class="fineprint">There is no permanent free version. After the trial, Fake Famous is a paid plan.</p>
+        </div>
+
+        <div class="pbox pro">
+          <div class="plan-name">Fake Famous Pro</div>
+          <div class="seg" role="group" aria-label="Billing period">
+            <button type="button" data-plan="monthly" aria-pressed="true">Monthly</button>
+            <button type="button" data-plan="yearly" aria-pressed="false">Yearly <span class="save" id="saveBadge">Save 46%</span></button>
+          </div>
+          <div class="big"><strong>€0</strong><span>today</span></div>
+          <p class="note2" id="proNote"></p>
+          <ul class="list">
+            <li>Streams with no time limit</li>
+            <li>Up to 36K viewers</li>
+            <li>All 12 languages</li>
+            <li>Recordings without a watermark</li>
+            <li>Scripted comments and timeline</li>
+            <li>Saved presets</li>
+          </ul>
+          <button class="btn grad" id="proBtn" type="button">Start 3-day free trial</button>
+          <div class="err" id="payErr" role="alert"></div>
+          <p class="secure" id="secure">Card required. Secure checkout by Paddle. Taxes included where they apply.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="band">
+    <div class="wrap">
+      <div class="faqgrid">
+      <h2>Questions</h2>
+      <div class="faq">
+        <details><summary>How does the free trial work?</summary><p>You get 3 days of full access. You add a card at sign-up and are charged nothing today. If you do nothing, your plan starts automatically on day 4 at the price you chose. Cancel before then and you pay nothing.</p></details>
+        <details><summary>Is anything actually broadcast?</summary><p>No. Fake Famous shows a simulated live screen on your own device. Nothing goes to Instagram, TikTok or any other platform, and no real people are watching.</p></details>
+        <details><summary>Does it work on my phone?</summary><p>Yes. It runs in your browser on iPhone, Android and desktop. Add it to your home screen for a full-screen view.</p></details>
+        <details><summary>Can I post the recording?</summary><p>Recordings are yours to download. Use them for fun, skits and practice, and follow the rules of the platform you post on.</p></details>
+        <details><summary>How do I cancel or get a refund?</summary><p>Cancel any time from the link in your receipt email. Cancel before the trial ends and you are never charged. Payments are handled by Paddle, our merchant of record. Refund terms are in our refund policy.</p></details>
+        <details><summary>Is Fake Famous connected to Instagram or TikTok?</summary><p>No. It's an independent app and is not affiliated with or endorsed by Instagram, TikTok or Meta. The layout names describe the style of live screen.</p></details>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="finale band">
+    <div class="wrap">
+      <h2>Go live to 35,000 people who don't exist.</h2>
+      <div class="cta-row">
+        <a class="btn grad" href="#pricing">Start 3-day free trial</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="#top"><b>Fake</b> Famous</a>
+    <nav aria-label="Legal">
+      <a href="/privacy.html">Privacy policy</a>
+      <a href="/terms.html">Terms of service</a>
+      <a href="/refunds.html">Refund policy</a>
+      <a href="mailto:support@yourdomain.com">support@yourdomain.com</a>
+    </nav>
+    <p>Fake Famous is a simulator for entertainment and practice. Nothing is broadcast. Not affiliated with Instagram, TikTok or Meta. Payments are processed by Paddle.com, our merchant of record.</p>
+  </div>
+</footer>
+
+<div class="sticky" id="sticky"><a class="btn grad" href="#pricing">Start 3-day free trial</a></div>
+
+<dialog id="demoDlg" aria-labelledby="demoT">
+  <h3 id="demoT">Checkout preview</h3>
+  <p>This is where Paddle's secure checkout opens. Add your Paddle client token and price IDs to CONFIG to switch it on.</p>
+  <div class="sum"><span>Due today</span><span>€0.00</span></div>
+  <div class="sum"><span id="demoPlan">Pro monthly</span><span id="demoAmt">€3.99</span></div>
+  <p class="fineprint">The plan price is charged automatically after the 3-day trial unless you cancel first.</p>
+  <div class="row2"><button class="btn white small" type="button" data-close>Close</button></div>
+</dialog>
+
+<dialog id="okDlg" aria-labelledby="okT">
+  <h3 id="okT">Your 3-day trial has started.</h3>
+  <p>Paddle has emailed your confirmation. Open Fake Famous and sign in with the same email to unlock everything. Your plan starts automatically after 3 days unless you cancel.</p>
+  <div class="row2"><a class="btn grad small" data-app-link data-welcome href="#">Open Fake Famous</a><button class="btn line small" type="button" data-close>Close</button></div>
+</dialog>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- CONFIG: edit this block ---------- */
+const CONFIG = {
+  appUrl: 'https://funny-trifle-29137d.netlify.app',
+  currency: 'EUR',
+  showVideoHint: false,              // true shows a "add video" note when assets/hero.mp4 is missing
+  // Trial: in Paddle, set a 3-day trial period on both prices (Catalog > Prices > Trial period, payment method required).
+  // That makes checkout charge €0 today and bill the plan automatically on day 4.
+  paddle: {
+    environment: 'sandbox',          // 'sandbox' while testing, 'production' when live
+    token: '',                       // Paddle client-side token (test_... or live_...)
+    prices: { monthly: '', yearly: '' }   // Paddle price IDs (pri_...)
+  },
+  plans: {
+    monthly: { amount: 3.99,  per: 'month', label: 'Pro monthly' },
+    yearly:  { amount: 25.99, per: 'year',  label: 'Pro yearly' }
+  }
+};
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const params = new URLSearchParams(location.search);
+const ref = params.get('ref') || '';
+const compact = n => n >= 1000 ? (n >= 100000 ? Math.round(n / 1000) : +(n / 1000).toFixed(1)) + 'K' : String(n);
+const fmtNum = n => n.toLocaleString('en-US');
+
+/* ---------- crowd data (the app's 12 languages) ---------- */
+const LANGS = [
+  ['en', 'English'], ['es', 'Español'], ['fr', 'Français'], ['de', 'Deutsch'],
+  ['pt', 'Português'], ['it', 'Italiano'], ['ru', 'Русский'], ['zh', '中文'],
+  ['ja', '日本語'], ['ko', '한국어'], ['ar', 'العربية'], ['hi', 'हिन्दी']
+];
+const BANK = {
+  en: { hype: ["LET'S GOOO", 'this is insane, keep going', "you're going viral right now", '35K?? no way', 'W stream'],
+        happy: ['love this energy', 'best stream today', 'you made my night'],
+        funny: ['my mom is in the chat help', 'who let him cook', 'chat, clip that'],
+        curious: ['how long have you been live?', 'what song is this?', 'where are you??'],
+        flirty: ['ok hi 👀', 'those vibes though', "can't stop watching"],
+        hater: ['is this staged?', 'who even is this', 'mute him lol', 'this chat is scripted'] },
+  es: { hype: ['¡Vamos!', 'Esto está rotundo', 'Sigue así, crack'], happy: ['Me encanta tu energía'], funny: ['Mi abuela dice hola'], curious: ['¿Cuánto llevas en vivo?'], hater: ['Esto está guionizado'] },
+  fr: { hype: ['Trop fort, continue !', 'Quelle ambiance'], happy: ["J'adore ton énergie"], funny: ['Ma mère est dans le chat'], curious: ['Vous êtes combien là ?'], hater: ["C'est écrit à l'avance, non ?"] },
+  de: { hype: ['Mega Stream, weiter so!', 'Das geht ab'], happy: ['Die Energie ist so gut'], funny: ['Meine Oma schaut zu'], curious: ['Wie lange bist du schon live?'], hater: ['Alles abgesprochen, oder?'] },
+  pt: { hype: ['Mandou bem demais!', 'Tá voando, continua'], happy: ['Amei a energia'], funny: ['Minha mãe tá no chat kkk'], curious: ['Quem mais veio pelo vídeo?'], hater: ['Isso é combinado, né'] },
+  it: { hype: ['Grande, spaccate!', 'Che spettacolo'], happy: ['Che bella energia'], funny: ['Mia nonna è in chat'], curious: ['Da quanto sei in diretta?'], hater: ['È tutto copione, dai'] },
+  ru: { hype: ['Огонь, продолжай!', 'Жесть, как круто'], happy: ['Классная энергия'], funny: ['Моя мама тоже в чате'], curious: ['Давно в эфире?'], hater: ['Всё это постановка'] },
+  zh: { hype: ['太强了，继续！', '这直播绝了'], happy: ['喜欢你的状态'], funny: ['我妈也在直播间'], curious: ['你播多久了？'], hater: ['这也太假了吧'] },
+  ja: { hype: ['最高の配信！', 'その調子！'], happy: ['この雰囲気好き'], funny: ['うちの母がチャットにいる'], curious: ['いつから配信してるの？'], hater: ['これ台本でしょ'] },
+  ko: { hype: ['방송 대박이에요!', '계속 가자!'], happy: ['에너지 너무 좋아요'], funny: ['우리 엄마도 채팅에 있음 ㅋㅋ'], curious: ['언제부터 라이브 하셨어요?'], hater: ['이거 짜고 치는 거죠?'] },
+  ar: { hype: ['ما شاء الله، بث رائع', 'استمر يا بطل'], happy: ['طاقتك حلوة'], funny: ['أمي موجودة في الشات'], curious: ['من متى وأنت مباشر؟'], hater: ['واضح إنه مرتب'] },
+  hi: { hype: ['भाई क्या बात है!', 'ज़बरदस्त, चलते रहो'], happy: ['तुम्हारी एनर्जी कमाल है'], funny: ['मेरी मम्मी भी चैट में हैं'], curious: ['कब से लाइव हो?'], hater: ['ये तो स्क्रिप्टेड लग रहा है'] }
+};
+const HANDLES = ['marta.fotos', 'kenji_live', 'amara.o', 'luca99', 'sofi_beats', 'dev.mehta', 'nour_k', 'joao.vlogs', 'ayse.t', 'minji.kr', 'rafa_g', 'chloe.paris', 'timo_b'];
+const GIFTS = ['sent a Rose 🌹', 'sent a Lion 🦁', 'sent Fireworks 🎆', 'sent a Crown 👑'];
+const GIFT_ODDS = { 1: 0.04, 2: 0.09, 3: 0.18 };
+const GIFT_NAMES = { 1: 'Low', 2: 'Normal', 3: 'High' };
+
+const state = {
+  lang: 'en', slow: false, plan: 'monthly',
+  viewers: 35500, likes: 18000, surge: 0, donations: 305, giftFreq: 2,
+  tones: new Set(['hype']),
+  verified: true, donationsOn: true, dayones: true
+};
+const screen = $('#screen');
+
+/* ---------- chat ---------- */
+const chat = $('#chat');
+const HEART_SVG = '<svg class="d1" width="12" height="12" viewBox="0 0 24 24" fill="#E0202B"><path d="M12 21s-7.500-4.600-9.600-9.300C.9 8.300 2.700 5 6 5c2 0 3.300 1.100 4 2.300C10.700 6.100 12 5 14 5c3.300 0 5.100 3.300 3.600 6.700C19.500 16.400 12 21 12 21z"/></svg>';
+
+function addMessage(o) {
+  const el = document.createElement('div');
+  el.className = 'msg ' + (o.kind || 'msg');
+  el.dir = 'auto';
+  if (o.kind === 'join') {
+    el.textContent = o.handle + ' joined';
+  } else {
+    const b = document.createElement('b');
+    if (o.dayone) b.insertAdjacentHTML('beforeend', HEART_SVG);
+    b.append(document.createTextNode(o.handle));
+    el.append(b, document.createTextNode(o.text));
+  }
+  chat.append(el);
+  while (chat.children.length > 8) chat.firstChild.remove();
+}
+function pickTone() {
+  const t = [...state.tones];
+  return t.length ? pick(t) : 'hype';
+}
+function textFor(tone) {
+  const b = BANK[state.lang] || BANK.en;
+  const key = tone === 'flirty' && state.lang !== 'en' ? 'happy' : tone;
+  return pick(b[key] || b.hype);
+}
+function say(tone) {
+  if (Math.random() < 0.1) return addMessage({ kind: 'join', handle: pick(HANDLES) });
+  addMessage({ kind: 'msg', handle: pick(HANDLES), text: textFor(tone || pickTone()), dayone: state.dayones && Math.random() < 0.3 });
+}
+function gift() {
+  if (!state.donationsOn) return;
+  addMessage({ kind: 'gift', handle: pick(HANDLES), text: pick(GIFTS) });
+  state.donations += rand(5, 60);
+  paintNumbers();
+}
+function burst(n, tone, gap) { for (let i = 0; i < n; i++) setTimeout(() => say(tone), i * gap); }
+function loop() {
+  if (Math.random() < GIFT_ODDS[state.giftFreq]) gift(); else say();
+  const base = state.slow ? 1700 : 700;
+  setTimeout(loop, base * (0.6 + Math.random() * 0.9) * (reduce ? 1.6 : 1));
+}
+
+/* ---------- numbers and hearts ---------- */
+function paintNumbers() {
+  $('#count').textContent = fmtNum(state.viewers);
+  $$('.pv').forEach(e => { e.textContent = compact(state.viewers); });
+  $('#lk').textContent = compact(state.likes);
+  $('#don').textContent = fmtNum(state.donations);
+}
+setInterval(() => {
+  const push = Math.min(state.surge, 400);
+  state.surge -= push;
+  state.viewers = Math.min(999999, Math.max(1000, state.viewers + rand(-4, 12) + push));
+  state.likes += rand(5, 40);
+  paintNumbers();
+}, 1000);
+
+const HEART = '<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 21s-7.500-4.600-9.600-9.300C.9 8.300 2.700 5 6 5c2 0 3.300 1.100 4 2.300C10.700 6.100 12 5 14 5c3.300 0 5.100 3.300 3.600 6.700C19.500 16.400 12 21 12 21z" fill="currentColor"/></svg>';
+if (!reduce) {
+  const hearts = $('#hearts');
+  const hues = ['#F0284A', '#FF7A8A', '#FF8812', '#FFFFFF'];
+  setInterval(() => {
+    if (document.hidden) return;
+    const h = document.createElement('span');
+    h.className = 'heart'; h.innerHTML = HEART;
+    h.style.color = pick(hues);
+    h.style.setProperty('--dx', rand(-26, 6) + 'px');
+    h.addEventListener('animationend', () => h.remove());
+    hearts.append(h);
+  }, 420);
+}
+
+/* ---------- crowd controls ---------- */
+const actions = {
+  hype() { burst(8, 'hype', 120); state.surge += 1500; },
+  gift() { for (let i = 0; i < 6; i++) setTimeout(gift, i * 200); },
+  surge() { state.surge += 6000; say('hype'); },
+  join() { for (let i = 0; i < 4; i++) setTimeout(() => addMessage({ kind: 'join', handle: pick(HANDLES) }), i * 150); state.surge += 800; },
+  slow(btn) { state.slow = !state.slow; btn.setAttribute('aria-pressed', String(state.slow)); }
+};
+$$('[data-act]').forEach(b => b.addEventListener('click', () => actions[b.dataset.act](b)));
+
+/* ---------- layout + tones ---------- */
+function setLayout(l) {
+  screen.dataset.layout = l;
+  $$('[data-layout]').forEach(b => { if (b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.dataset.layout === l)); });
+}
+$$('button[data-layout]').forEach(b => b.addEventListener('click', () => setLayout(b.dataset.layout)));
+$$('[data-tone]').forEach(b => b.addEventListener('click', () => {
+  const t = b.dataset.tone, on = b.getAttribute('aria-pressed') !== 'true';
+  on ? state.tones.add(t) : state.tones.delete(t);
+  if (!state.tones.size) { state.tones.add('hype'); $('[data-tone=hype]').setAttribute('aria-pressed', 'true'); }
+  b.setAttribute('aria-pressed', String(state.tones.has(t)));
+  if (on) say(t);
+}));
+
+/* ---------- sliders ---------- */
+function paintRange(r) { r.style.setProperty('--v', ((r.value - r.min) / (r.max - r.min) * 100) + '%'); }
+const sV = $('#sViews'), sD = $('#sDon'), sG = $('#sGift'), sL = $('#sLike');
+function syncSliders() {
+  $('#vViews').textContent = fmtNum(+sV.value);
+  $('#vDon').textContent = '$' + fmtNum(+sD.value);
+  $('#vGift').textContent = GIFT_NAMES[+sG.value];
+  $('#vLike').textContent = compact(+sL.value);
+  [sV, sD, sG, sL].forEach(paintRange);
+}
+sV.addEventListener('input', () => { state.viewers = +sV.value; syncSliders(); paintNumbers(); });
+sD.addEventListener('input', () => { state.donations = +sD.value; syncSliders(); paintNumbers(); });
+sG.addEventListener('input', () => { state.giftFreq = +sG.value; syncSliders(); });
+sL.addEventListener('input', () => { state.likes = +sL.value; syncSliders(); paintNumbers(); });
+syncSliders();
+
+/* ---------- script + timeline ---------- */
+const script = $('#script'), track = $('#track'), moments = $('#moments');
+function parseScript() {
+  const rows = [];
+  script.value.split('\n').forEach(l => {
+    const m = l.trim().match(/^(\d{1,2}):(\d{2})\s+(.+)$/);
+    if (m) { const s = +m[1] * 60 + +m[2]; if (s <= 300) rows.push({ s, label: m[1] + ':' + m[2], text: m[3] }); }
+  });
+  rows.sort((a, b) => a.s - b.s);
+  track.innerHTML = ''; moments.innerHTML = '';
+  rows.forEach(r => {
+    const i = document.createElement('i'); i.style.left = (r.s / 300 * 100) + '%'; track.append(i);
+    const d = document.createElement('div'), t = document.createElement('time');
+    t.textContent = r.label; d.append(t, document.createTextNode(r.text)); moments.append(d);
+  });
+  $('#lines').textContent = 'Lines: ' + rows.length;
+  $('#planned').textContent = rows.length + ' planned';
+}
+script.addEventListener('input', parseScript);
+parseScript();
+
+/* ---------- languages ---------- */
+const langBox = $('#langs'), bubble = $('#bubble');
+function paintBubble() {
+  const name = LANGS.find(l => l[0] === state.lang)[1];
+  bubble.innerHTML = '';
+  const t = document.createElement('div'); t.dir = 'auto'; t.textContent = BANK[state.lang].hype[0];
+  const s = document.createElement('small'); s.textContent = 'Fans chatting in ' + name;
+  t.append(s); bubble.append(t);
+}
+LANGS.forEach(([code, name]) => {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'chip'; b.textContent = name; b.dataset.lang = code;
+  b.setAttribute('aria-pressed', String(code === state.lang));
+  b.addEventListener('click', () => {
+    state.lang = code;
+    $$('[data-lang]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.lang === code)));
+    paintBubble(); burst(3, null, 140);
+  });
+  langBox.append(b);
+});
+paintBubble();
+
+/* ---------- before-you-start switches ---------- */
+$$('[data-sw]').forEach(sw => sw.addEventListener('click', () => {
+  const on = sw.getAttribute('aria-checked') !== 'true';
+  sw.setAttribute('aria-checked', String(on));
+  const k = sw.dataset.sw;
+  if (k === 'verified') { state.verified = on; screen.dataset.verified = on ? '1' : '0'; }
+  if (k === 'donations') { state.donationsOn = on; screen.dataset.don = on ? '1' : '0'; }
+  if (k === 'dayones') state.dayones = on;
+  if (k === 'crowd') screen.dataset.crowd = on ? '1' : '0';
+}));
+
+/* ---------- hero video ---------- */
+const vid = $('#heroVideo'), vsrc = $('#heroVideo source'), vhint = $('#videoHint'), snd = $('#soundBtn');
+function noVideo() { vid.hidden = true; snd.hidden = true; if (CONFIG.showVideoHint) vhint.hidden = false; }
+vsrc.addEventListener('error', noVideo);
+vid.addEventListener('error', noVideo);
+function checkVideo() { if (vid.networkState === 3 || vid.error) noVideo(); }
+checkVideo();
+setTimeout(checkVideo, 1200);
+setTimeout(checkVideo, 3500);
+vid.addEventListener('loadeddata', () => { snd.hidden = false; vhint.hidden = true; });
+snd.addEventListener('click', () => {
+  vid.muted = !vid.muted;
+  snd.setAttribute('aria-pressed', String(!vid.muted));
+  snd.textContent = vid.muted ? 'Tap for sound' : 'Sound on';
+  vid.play().catch(() => {});
+});
+
+/* ---------- app links ---------- */
+function appHref(welcome) {
+  const u = new URL(CONFIG.appUrl);
+  u.searchParams.set('lang', state.lang);
+  if (ref) u.searchParams.set('ref', ref);
+  if (welcome) u.searchParams.set('welcome', '1');
+  return u.toString();
+}
+$$('[data-app-link]').forEach(a => {
+  a.target = '_blank'; a.rel = 'noopener';
+  a.addEventListener('click', () => { a.href = appHref(a.hasAttribute('data-welcome')); });
+  a.href = appHref(a.hasAttribute('data-welcome'));
+});
+
+/* ---------- pricing ---------- */
+const money = new Intl.NumberFormat('en-IE', { style: 'currency', currency: CONFIG.currency });
+function renderPlan() {
+  const p = CONFIG.plans[state.plan];
+  const price = p.display || money.format(p.amount);
+  const then = state.plan === 'yearly' ? `${price} a year` : `${price} a month`;
+  $('#proNote').textContent = `Then ${then} from day 4, charged automatically. Cancel any time.`;
+  $('#thenPrice').textContent = then;
+  $$('[data-plan]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.plan === state.plan)));
+}
+const m = CONFIG.plans.monthly.amount, y = CONFIG.plans.yearly.amount;
+$('#saveBadge').textContent = 'Save ' + Math.round((1 - y / (m * 12)) * 100) + '%';
+$$('[data-plan]').forEach(b => b.addEventListener('click', () => { state.plan = b.dataset.plan; renderPlan(); }));
+renderPlan();
+
+/* ---------- payments (Paddle Billing, Paddle.js v2) ---------- */
+let paddleReady = false, justPaid = false;
+const err = $('#payErr');
+
+function onPaddleEvent(e) {
+  if (!e || !e.name) return;
+  if (e.name === 'checkout.completed') justPaid = true;
+  if (e.name === 'checkout.closed' && justPaid) { justPaid = false; $('#okDlg').showModal(); }
+  if (e.name === 'checkout.error' || e.name === 'checkout.payment.failed')
+    err.textContent = 'The payment did not go through. Check your card details or try another card.';
+}
+function initPaddle() {
+  const c = CONFIG.paddle;
+  if (!c.token) return;
+  const s = document.createElement('script');
+  s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+  s.onload = () => {
+    try {
+      if (c.environment === 'sandbox') Paddle.Environment.set('sandbox');
+      Paddle.Initialize({ token: c.token, eventCallback: onPaddleEvent });
+      paddleReady = true;
+      localisePrices();
+    } catch (x) { err.textContent = 'Checkout could not start. Reload the page and try again.'; }
+  };
+  s.onerror = () => { err.textContent = 'Checkout could not load. Check your connection and try again.'; };
+  document.head.append(s);
+}
+function localisePrices() {
+  ['monthly', 'yearly'].forEach(k => {
+    const id = CONFIG.paddle.prices[k];
+    if (!id) return;
+    Paddle.PricePreview({ items: [{ priceId: id, quantity: 1 }] })
+      .then(r => { CONFIG.plans[k].display = r.data.details.lineItems[0].formattedTotals.total; renderPlan(); })
+      .catch(() => {});
+  });
+}
+function startCheckout() {
+  err.textContent = '';
+  const p = CONFIG.plans[state.plan];
+  const priceId = CONFIG.paddle.prices[state.plan];
+  if (!paddleReady || !priceId) {
+    $('#demoPlan').textContent = p.label + ' after trial';
+    $('#demoAmt').textContent = p.display || money.format(p.amount);
+    $('#demoDlg').showModal();
+    return;
+  }
+  Paddle.Checkout.open({
+    items: [{ priceId, quantity: 1 }],
+    settings: { displayMode: 'overlay', theme: 'dark', locale: 'en' },
+    customData: { plan: state.plan, lang: state.lang, ref }
+  });
+}
+$('#proBtn').addEventListener('click', startCheckout);
+$$('dialog [data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+initPaddle();
+
+/* ---------- sticky start button (phones) ---------- */
+const sticky = $('#sticky');
+const watched = [$('#heroCta'), $('#pricing'), $('.finale'), $('footer')].filter(Boolean);
+const seen = new Set();
+function updateSticky() { sticky.classList.toggle('on', seen.size === 0 && window.scrollY > 200); }
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => e.isIntersecting ? seen.add(e.target) : seen.delete(e.target));
+    updateSticky();
+  });
+  watched.forEach(el => io.observe(el));
+  addEventListener('scroll', updateSticky, { passive: true });
+}
+
+/* ---------- go ---------- */
+paintNumbers();
+for (let i = 0; i < 5; i++) say();
+loop();
+})();
+</script>
+</body>
+</html>

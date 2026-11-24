@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#000000">
 <title>Fake Famous</title>
 <meta name="description" content="Stage a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one. Nothing is broadcast.">
-<meta property="og:title" content="35,000 people are watching you. Nobody is.">
+<meta property="og:title" content="35,500 fans just tuned in. None of them are real.">
 <meta property="og:description" content="Fake Famous stages a simulated livestream with a scripted crowd in 12 languages. Runs in your browser.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="assets/og.jpg">
@@ -106,6 +106,14 @@ a{color:inherit}
 .studio{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,360px);column-gap:clamp(40px,7vw,112px);align-items:start}
 .hero{padding:clamp(48px,9vh,104px) 0 clamp(56px,9vh,96px)}
 .hero h1{font-size:clamp(46px,5.9vw,88px);line-height:1.02;font-variant-numeric:tabular-nums}
+.hero h1 .alt{display:block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.04em}
+/* Odometer: each digit is a 0-9 column that slides to its value */
+.odo{display:inline-flex;vertical-align:top;color:#fff}
+.odo-d{display:inline-block;height:1.02em;overflow:hidden;width:.52em;text-align:center}
+.odo-s{display:flex;flex-direction:column;transition:transform .9s cubic-bezier(.2,.75,.15,1)}
+.odo-s span{display:block;height:1.02em;line-height:1.02em}
+.odo-c{display:inline-block;width:.22em;line-height:1.02em}
+.odo.boot .odo-s{transition-duration:2.2s}
 .lede{margin-top:28px;max-width:30em;font-size:clamp(17px,1.4vw,20px);line-height:1.6;color:var(--mute)}
 .cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
 .fine{margin-top:16px;font-size:14px;color:var(--dim)}
@@ -373,7 +381,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
   <div class="wrap studio">
     <div class="col">
       <div class="hero">
-        <h1><span id="count">35,500</span> people are watching you. Nobody is.</h1>
+        <h1 aria-label="35,500 fans just tuned in. None of them are real."><span aria-hidden="true"><span class="odo boot" id="count">35,500</span> fans just tuned&nbsp;in. <span class="alt">None of them are real.</span></span></h1>
         <p class="lede">Fake Famous stages a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one.</p>
         <div class="cta-row" id="heroCta">
           <a class="btn grad" href="#pricing">Get Fake Famous Pro</a>
@@ -730,8 +738,29 @@ function loop() {
 }
 
 /* ---------- numbers and hearts ---------- */
+function setOdo(el, n) {
+  const str = fmtNum(n);
+  if (el.dataset.len !== String(str.length)) {
+    el.textContent = '';
+    for (const ch of str) {
+      if (/\d/.test(ch)) {
+        const d = document.createElement('span'); d.className = 'odo-d';
+        const col = document.createElement('span'); col.className = 'odo-s';
+        for (let i = 0; i < 10; i++) { const x = document.createElement('span'); x.textContent = i; col.append(x); }
+        d.append(col); el.append(d);
+      } else {
+        const c = document.createElement('span'); c.className = 'odo-c'; c.textContent = ch; el.append(c);
+      }
+    }
+    el.dataset.len = String(str.length);
+    el.getBoundingClientRect();
+  }
+  const cols = el.querySelectorAll('.odo-s');
+  let k = 0;
+  for (const ch of str) if (/\d/.test(ch)) cols[k++].style.transform = 'translateY(' + (-ch * 1.02) + 'em)';
+}
 function paintNumbers() {
-  $('#count').textContent = fmtNum(state.viewers);
+  setOdo($('#count'), state.viewers);
   $$('.pv').forEach(e => { e.textContent = compact(state.viewers); });
   $('#lk').textContent = compact(state.likes);
   $('#don').textContent = fmtNum(state.donations);
@@ -972,7 +1001,16 @@ if ('IntersectionObserver' in window) {
 }
 
 /* ---------- go ---------- */
-paintNumbers();
+(() => {
+  const c = $('#count');
+  // Start every digit at 0, then roll up to the live count with a stagger.
+  setOdo(c, 10000);
+  c.querySelectorAll('.odo-s').forEach((col, i) => { col.style.transform = 'translateY(0)'; col.style.transitionDelay = (i * 0.12) + 's'; });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    paintNumbers();
+    setTimeout(() => { c.classList.remove('boot'); c.querySelectorAll('.odo-s').forEach(col => { col.style.transitionDelay = ''; }); }, 2900);
+  }));
+})();
 for (let i = 0; i < 5; i++) say();
 loop();
 })();

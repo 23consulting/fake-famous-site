@@ -62,8 +62,8 @@ a{color:inherit}
 
 /* Header */
 .top{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
-.mark{font-family:var(--display);font-size:30px;line-height:1;text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:80px}
+.mark{font-family:var(--display);font-size:44px;line-height:1;text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
 .mark b{font-weight:400;color:var(--brand)}
 .mark small{display:block;font:500 11px var(--body);text-transform:none;letter-spacing:0;color:var(--mute);margin-top:4px}
 .nav{display:flex;align-items:center;gap:26px;font-weight:600;font-size:15px}
@@ -128,7 +128,7 @@ a{color:inherit}
 @media (max-width:480px){.hero{padding-top:28px}.cta-row .btn{flex:1 1 100%}.assure{margin-top:32px}}
 
 /* Phone */
-.stage{display:flex;flex-direction:column;align-items:center;gap:16px;position:sticky;top:92px;align-self:start;padding-bottom:8px}
+.stage{display:flex;flex-direction:column;align-items:center;gap:16px;position:sticky;top:104px;align-self:start;padding-bottom:8px}
 .stage::before{content:"";position:absolute;inset:8% 0 22%;background:radial-gradient(closest-side,rgba(240,40,74,.3),transparent 72%);filter:blur(34px)}
 .stage .seg{position:relative;width:100%;max-width:340px}
 .phone{container-type:inline-size;position:relative;width:clamp(264px,calc((100vh - 290px) * .4893),340px);aspect-ratio:9/18.4;border-radius:46px;background:#0b0b0d;padding:9px;box-shadow:0 0 0 1.5px #2e2e35,0 40px 70px -26px rgba(240,40,74,.45)}
@@ -299,7 +299,7 @@ footer{padding:34px 0 56px;font-size:14px;color:var(--dim)}
 footer .wrap{display:grid;gap:14px}
 footer nav{display:flex;flex-wrap:wrap;gap:6px 22px}
 footer a{color:var(--mute);font-weight:600}
-footer a.mark{color:var(--text);font-weight:400;text-decoration:none}
+footer a.mark{color:var(--text);font-weight:400;text-decoration:none;font-size:30px}
 
 /* Dialogs */
 dialog{border:1px solid var(--line);border-radius:24px;padding:28px;max-width:min(440px,92vw);background:var(--sheet);color:#fff;box-shadow:0 30px 80px rgba(0,0,0,.7)}
@@ -332,8 +332,8 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
   .pbox{padding:22px 18px}
   .finale h2{font-size:clamp(38px,11.5vw,56px)}
   .finale .cta-row .btn{flex:1 1 100%}
-  .bar{height:60px}
-  .mark{font-size:24px}
+  .bar{height:66px}
+  .mark{font-size:34px}
   footer nav{gap:10px 20px}
   .bubble{min-height:84px;padding:18px}
 }
@@ -364,7 +364,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       <a class="link" href="#features">Features</a>
       <a class="link" href="#pricing">Pricing</a>
       <a class="link" href="#faq">FAQ</a>
-      <a class="btn white small" href="#pricing">Free trial</a>
+      <a class="btn white small" href="#pricing">Get Pro</a>
     </nav>
   </div>
 </header>
@@ -376,10 +376,10 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
         <h1><span id="count">35,500</span> people are watching you. Nobody is.</h1>
         <p class="lede">Fake Famous stages a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one.</p>
         <div class="cta-row" id="heroCta">
-          <a class="btn grad" href="#pricing">Start 3-day free trial</a>
+          <a class="btn grad" href="#pricing">Get Fake Famous Pro</a>
           <a class="btn line" href="#features">See what you get</a>
         </div>
-        <p class="fine">Card required. Cancel before day 3 and you pay nothing. Works on iPhone, Android and desktop.</p>
+        <p class="fine">€3.99 a month or €25.99 a year. Cancel any time. Works on iPhone, Android and desktop.</p>
         <p class="assure"><i></i>Simulated stream. Nothing is broadcast and no real viewers are involved. Not affiliated with Instagram, TikTok or Meta.</p>
       </div>
 
@@ -443,7 +443,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       </section>
 
       <section class="block">
-          <div class="copy"><h2>12 languages</h2><p>Your fake fans chat in the language you choose. Tap one and the phone switches with it. All 12 are included from the first day of your trial.</p></div>
+          <div class="copy"><h2>12 languages</h2><p>Your fake fans chat in the language you choose. Tap one and the phone switches with it. All 12 are included with Pro.</p></div>
           <div class="panel pad">
           <div class="langs" id="langs" role="group" aria-label="Chat language"></div>
           <div class="bubble" id="bubble"></div>
@@ -523,16 +523,16 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
 
   <section id="pricing" class="price-band band">
     <div class="wrap">
-      <h2>Try everything free for 3 days.</h2>
+      <h2>One plan. Everything included.</h2>
       <div class="pgrid">
         <div class="pbox how">
-          <div class="plan-name">How the trial works</div>
+          <div class="plan-name">How it works</div>
           <ol class="steps">
-            <li><b>Today</b><span>Pick a plan and add a card. You are charged nothing now.</span></li>
-            <li><b>Days 1 to 3</b><span>Full access: every language, no stream limit, no watermark. Cancel in one click and you never pay.</span></li>
-            <li><b>Day 4</b><span>Your plan starts automatically at <em id="thenPrice">€3.99 a month</em>. Cancel any time after that too.</span></li>
+            <li><b>Pick a plan</b><span>Monthly or yearly. You pay <em id="thenPrice">€3.99 a month</em> through Paddle's secure checkout.</span></li>
+            <li><b>Unlock everything</b><span>Full access straight away: every language, no stream limit, no watermark.</span></li>
+            <li><b>Cancel any time</b><span>Your plan renews automatically. Cancel from the link in your receipt email whenever you like.</span></li>
           </ol>
-          <p class="fineprint">There is no permanent free version. After the trial, Fake Famous is a paid plan.</p>
+          <p class="fineprint">There is no free version. Fake Famous is a paid plan.</p>
         </div>
 
         <div class="pbox pro">
@@ -541,7 +541,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
             <button type="button" data-plan="monthly" aria-pressed="true">Monthly</button>
             <button type="button" data-plan="yearly" aria-pressed="false">Yearly <span class="save" id="saveBadge">Save 46%</span></button>
           </div>
-          <div class="big"><strong>€0</strong><span>today</span></div>
+          <div class="big"><strong id="bigPrice">€3.99</strong><span id="bigPer">a month</span></div>
           <p class="note2" id="proNote"></p>
           <ul class="list">
             <li>Streams with no time limit</li>
@@ -551,9 +551,9 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
             <li>Scripted comments and timeline</li>
             <li>Saved presets</li>
           </ul>
-          <button class="btn grad" id="proBtn" type="button">Start 3-day free trial</button>
+          <button class="btn grad" id="proBtn" type="button">Get Pro</button>
           <div class="err" id="payErr" role="alert"></div>
-          <p class="secure" id="secure">Card required. Secure checkout by Paddle. Taxes included where they apply.</p>
+          <p class="secure" id="secure">Secure checkout by Paddle. Taxes included where they apply. By subscribing you agree to our <a href="terms.html">Terms</a> and <a href="refunds.html">Refund policy</a>, including a 30-day refund.</p>
         </div>
       </div>
     </div>
@@ -564,11 +564,11 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       <div class="faqgrid">
       <h2>Questions</h2>
       <div class="faq">
-        <details><summary>How does the free trial work?</summary><p>You get 3 days of full access. You add a card at sign-up and are charged nothing today. If you do nothing, your plan starts automatically on day 4 at the price you chose. Cancel before then and you pay nothing.</p></details>
+        <details><summary>How much does it cost?</summary><p>Fake Famous Pro is €3.99 a month or €25.99 a year. You pay at checkout, get full access straight away, and the plan renews automatically until you cancel.</p></details>
         <details><summary>Is anything actually broadcast?</summary><p>No. Fake Famous shows a simulated live screen on your own device. Nothing goes to Instagram, TikTok or any other platform, and no real people are watching.</p></details>
         <details><summary>Does it work on my phone?</summary><p>Yes. It runs in your browser on iPhone, Android and desktop. Add it to your home screen for a full-screen view.</p></details>
         <details><summary>Can I post the recording?</summary><p>Recordings are yours to download. Use them for fun, skits and practice, and follow the rules of the platform you post on.</p></details>
-        <details><summary>How do I cancel or get a refund?</summary><p>Cancel any time from the link in your receipt email. Cancel before the trial ends and you are never charged. Payments are handled by Paddle, our merchant of record. Refund terms are in our refund policy.</p></details>
+        <details><summary>How do I cancel or get a refund?</summary><p>Cancel any time from the link in your receipt email. Changed your mind? You can get a full refund within 30 days of any payment at paddle.net. Payments are handled by Paddle, our merchant of record. Refund terms are in our refund policy.</p></details>
         <details><summary>Is Fake Famous connected to Instagram or TikTok?</summary><p>No. It's an independent app and is not affiliated with or endorsed by Instagram, TikTok or Meta. The layout names describe the style of live screen.</p></details>
       </div>
       </div>
@@ -579,7 +579,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
     <div class="wrap">
       <h2>Go live to 35,000 people who don't exist.</h2>
       <div class="cta-row">
-        <a class="btn grad" href="#pricing">Start 3-day free trial</a>
+        <a class="btn grad" href="#pricing">Get Fake Famous Pro</a>
       </div>
     </div>
   </section>
@@ -589,29 +589,28 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
   <div class="wrap">
     <a class="mark" href="#top"><b>Fake</b> Famous</a>
     <nav aria-label="Legal">
-      <a href="/privacy.html">Privacy policy</a>
-      <a href="/terms.html">Terms of service</a>
-      <a href="/refunds.html">Refund policy</a>
+      <a href="privacy.html">Privacy policy</a>
+      <a href="terms.html">Terms of service</a>
+      <a href="refunds.html">Refund policy</a>
       <a href="mailto:support@yourdomain.com">support@yourdomain.com</a>
     </nav>
     <p>Fake Famous is a simulator for entertainment and practice. Nothing is broadcast. Not affiliated with Instagram, TikTok or Meta. Payments are processed by Paddle.com, our merchant of record.</p>
   </div>
 </footer>
 
-<div class="sticky" id="sticky"><a class="btn grad" href="#pricing">Start 3-day free trial</a></div>
+<div class="sticky" id="sticky"><a class="btn grad" href="#pricing">Get Fake Famous Pro</a></div>
 
 <dialog id="demoDlg" aria-labelledby="demoT">
   <h3 id="demoT">Checkout preview</h3>
   <p>This is where Paddle's secure checkout opens. Add your Paddle client token and price IDs to CONFIG to switch it on.</p>
-  <div class="sum"><span>Due today</span><span>€0.00</span></div>
   <div class="sum"><span id="demoPlan">Pro monthly</span><span id="demoAmt">€3.99</span></div>
-  <p class="fineprint">The plan price is charged automatically after the 3-day trial unless you cancel first.</p>
+  <p class="fineprint">The plan renews automatically each month or year until you cancel.</p>
   <div class="row2"><button class="btn white small" type="button" data-close>Close</button></div>
 </dialog>
 
 <dialog id="okDlg" aria-labelledby="okT">
-  <h3 id="okT">Your 3-day trial has started.</h3>
-  <p>Paddle has emailed your confirmation. Open Fake Famous and sign in with the same email to unlock everything. Your plan starts automatically after 3 days unless you cancel.</p>
+  <h3 id="okT">You're Pro now.</h3>
+  <p>Paddle has emailed your receipt. Open Fake Famous and sign in with the same email to unlock everything.</p>
   <div class="row2"><a class="btn grad small" data-app-link data-welcome href="#">Open Fake Famous</a><button class="btn line small" type="button" data-close>Close</button></div>
 </dialog>
 
@@ -624,8 +623,7 @@ const CONFIG = {
   appUrl: 'https://funny-trifle-29137d.netlify.app',
   currency: 'EUR',
   showVideoHint: false,              // true shows a "add video" note when assets/hero.mp4 is missing
-  // Trial: in Paddle, set a 3-day trial period on both prices (Catalog > Prices > Trial period, payment method required).
-  // That makes checkout charge €0 today and bill the plan automatically on day 4.
+  // No free trial: leave the trial period empty on both prices in Paddle, so checkout charges the plan price right away.
   paddle: {
     environment: 'sandbox',          // 'sandbox' while testing, 'production' when live
     token: '',                       // Paddle client-side token (test_... or live_...)
@@ -892,8 +890,10 @@ function renderPlan() {
   const p = CONFIG.plans[state.plan];
   const price = p.display || money.format(p.amount);
   const then = state.plan === 'yearly' ? `${price} a year` : `${price} a month`;
-  $('#proNote').textContent = `Then ${then} from day 4, charged automatically. Cancel any time.`;
+  $('#proNote').textContent = `Billed ${state.plan === 'yearly' ? 'yearly' : 'monthly'}, renews automatically. Cancel any time.`;
   $('#thenPrice').textContent = then;
+  $('#bigPrice').textContent = price;
+  $('#bigPer').textContent = state.plan === 'yearly' ? 'a year' : 'a month';
   $$('[data-plan]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.plan === state.plan)));
 }
 const m = CONFIG.plans.monthly.amount, y = CONFIG.plans.yearly.amount;
@@ -942,7 +942,7 @@ function startCheckout() {
   const p = CONFIG.plans[state.plan];
   const priceId = CONFIG.paddle.prices[state.plan];
   if (!paddleReady || !priceId) {
-    $('#demoPlan').textContent = p.label + ' after trial';
+    $('#demoPlan').textContent = p.label;
     $('#demoAmt').textContent = p.display || money.format(p.amount);
     $('#demoDlg').showModal();
     return;

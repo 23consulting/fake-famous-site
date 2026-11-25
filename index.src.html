@@ -484,7 +484,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
         </div>
         <div class="phone" role="img" aria-label="A Fake Famous simulated livestream with fans chatting">
           <div class="screen" id="screen" data-layout="ig" data-verified="1" data-crowd="0" data-don="1">
-            <video id="heroVideo" autoplay muted loop playsinline preload="metadata" poster="assets/hero-poster.jpg">
+            <video id="heroVideo" autoplay muted loop playsinline preload="auto" poster="assets/hero-poster.jpg">
               <source src="assets/hero.mp4" type="video/mp4">
             </video>
             <div class="scrim"></div>
@@ -892,6 +892,12 @@ checkVideo();
 setTimeout(checkVideo, 1200);
 setTimeout(checkVideo, 3500);
 vid.addEventListener('loadeddata', () => { snd.hidden = false; vhint.hidden = true; });
+// Start the clip if the browser didn't autoplay it, and retry on first interaction or when the tab becomes visible.
+function kickVideo() { if (vid.paused && !vid.hidden) vid.play().catch(() => {}); }
+['loadeddata', 'canplay'].forEach(ev => vid.addEventListener(ev, kickVideo));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) kickVideo(); });
+['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(ev => addEventListener(ev, kickVideo, { once: true, passive: true }));
+kickVideo();
 snd.addEventListener('click', () => {
   vid.muted = !vid.muted;
   snd.setAttribute('aria-pressed', String(!vid.muted));

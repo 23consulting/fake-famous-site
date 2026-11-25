@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
-<title>Fake Famous</title>
-<meta name="description" content="Stage a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one. Nothing is broadcast.">
+<title>Fake Famous: livestream simulator for pranks, skits and rehearsal</title>
+<meta name="description" content="A livestream simulator for pranks, comedy skits and rehearsal. Stage a pretend stream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one. Nothing is broadcast.">
 <meta property="og:title" content="35,500 fans just tuned in. None of them are real.">
 <meta property="og:description" content="Fake Famous stages a simulated livestream with a scripted crowd in 12 languages. Runs in your browser.">
 <meta property="og:type" content="website">
@@ -151,6 +151,9 @@ a{color:inherit}
 .nm{font-weight:700;font-size:13px;line-height:1.15;display:flex;align-items:center;gap:4px}
 .who small{display:block;font-size:11px;opacity:.8}
 .vf{flex:none}
+.simtag{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) rotate(-18deg);font:700 34px/1 Inter,system-ui,sans-serif;letter-spacing:.18em;color:rgba(255,255,255,.16);pointer-events:none;z-index:3;white-space:nowrap}
+.aitag{position:absolute;right:10px;bottom:62px;font:600 10px/1.2 Inter,system-ui,sans-serif;color:rgba(255,255,255,.75);background:rgba(0,0,0,.45);padding:3px 7px;border-radius:6px;pointer-events:none;z-index:3}
+.eyebrow{font:700 13px/1.3 Inter,system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#FFB061;margin:0 0 10px}
 .livebadge{margin-left:auto;background:var(--grad);font-weight:800;font-size:11px;letter-spacing:.03em;padding:5px 9px;border-radius:7px}
 .pill{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);padding:5px 9px;border-radius:7px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
 .x{width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.4);display:grid;place-items:center}
@@ -381,26 +384,27 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
   <div class="wrap studio">
     <div class="col">
       <div class="hero">
+        <p class="eyebrow">Livestream simulator for pranks, skits &amp; rehearsal</p>
         <h1 aria-label="35,500 fans just tuned in. None of them are real."><span aria-hidden="true"><span class="odo boot" id="count">35,500</span> fans just tuned&nbsp;in. <span class="alt">None of them are real.</span></span></h1>
-        <p class="lede">Fake Famous stages a livestream with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, shoot a skit or rehearse before the real one.</p>
+        <p class="lede">Fake Famous is a pretend livestream that runs on your own device, with a scripted crowd that cheers, trolls and tips in 12 languages. Prank your friends, film a comedy skit, or rehearse before you go live for real.</p>
         <div class="cta-row" id="heroCta">
           <a class="btn grad" href="#pricing">Get Fake Famous Pro</a>
           <a class="btn line" href="#features">See what you get</a>
         </div>
         <p class="fine">€3.99 a month or €25.99 a year. Cancel any time. Works on iPhone, Android and desktop.</p>
-        <p class="assure"><i></i>Simulated stream. Nothing is broadcast and no real viewers are involved. Not affiliated with Instagram, TikTok or Meta.</p>
+        <p class="assure"><i></i>Simulated stream. Nothing is broadcast and no real viewers are involved. The crowd and the demo performer are made up. Not affiliated with any social media platform.</p>
       </div>
 
   <div id="features" class="blocks">
 
       <section class="block">
-          <div class="copy"><h2>Pick your layout and your crowd</h2><p>Choose an Instagram or TikTok style live screen, then mix the audience. Pick as many tones as you like and the comments blend between them. The phone follows every choice.</p></div>
+          <div class="copy"><h2>Pick your layout and your crowd</h2><p>Choose a Classic or Vertical style live screen, then mix the audience. Pick as many tones as you like and the comments blend between them. The phone follows every choice.</p></div>
           <div class="stack">
           <div>
-            <div class="lab">Layout style<small>Matches the real live screen of the app you pick.</small></div>
+            <div class="lab">Layout style<small>Two made-up live-screen styles.</small></div>
             <div class="two" style="margin-top:12px">
-              <button class="opt wide" type="button" data-layout="ig" aria-pressed="true"><b>Instagram</b><span>Live badge, side camera controls</span></button>
-              <button class="opt wide" type="button" data-layout="tt" aria-pressed="false"><b>TikTok</b><span>Host capsule, top gifters, gift bar</span></button>
+              <button class="opt wide" type="button" data-layout="ig" aria-pressed="true"><b>Classic</b><span>Live badge, side camera controls</span></button>
+              <button class="opt wide" type="button" data-layout="tt" aria-pressed="false"><b>Vertical</b><span>Host capsule, top gifters, gift bar</span></button>
             </div>
           </div>
           <div>
@@ -431,7 +435,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
             <p class="sub">How often fans send gifts.</p></div>
           <div class="slide"><div class="head"><h3>Starting like count</h3><span class="val" id="vLike">18K</span></div>
             <input type="range" id="sLike" min="1000" max="1000000" step="1000" value="18000" aria-label="Starting like count">
-            <p class="sub">Shown under your name in the TikTok layout.</p></div>
+            <p class="sub">Shown under your name in the Vertical layout.</p></div>
         </div>
       </section>
 
@@ -459,14 +463,14 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       </section>
 
       <section class="block">
-          <div class="copy"><h2>Everything before you go live</h2><p>One sheet covers the verified badge, audience donations, layout, recording, a 3-2-1 countdown, Day Ones and an optional crowd controls button. Flip them and watch the phone.</p></div>
+          <div class="copy"><h2>Everything before you go live</h2><p>One sheet covers the star badge, audience donations, layout, recording, a 3-2-1 countdown, Day Ones and an optional crowd controls button. Flip them and watch the phone.</p></div>
           <div class="sheet">
           <h3>Before You Start</h3>
           <p class="intro">Your live will have up to <b>36K</b> viewers.</p>
-          <div class="srow"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.4l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div class="t"><b>Get Verified!</b></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Get Verified" data-sw="verified"></button></div>
+          <div class="srow"><span class="ic"><svg width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#FFB020"/><path d="M12 5.6l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#fff"/></svg></span><div class="t"><b>Star badge</b></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Star badge" data-sw="verified"></button></div>
           <div class="srow"><span class="ic" style="background:#E56900"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18"/></svg></span><div class="t"><b>Audience Donations</b></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Audience donations" data-sw="donations"></button></div>
           <div class="srow"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span><div class="t"><b>Layout</b></div>
-            <div class="seg" role="group" aria-label="Layout"><button type="button" data-layout="ig" aria-pressed="true">Instagram</button><button type="button" data-layout="tt" aria-pressed="false">TikTok</button></div></div>
+            <div class="seg" role="group" aria-label="Layout"><button type="button" data-layout="ig" aria-pressed="true">Classic</button><button type="button" data-layout="tt" aria-pressed="false">Vertical</button></div></div>
           <div class="srow"><span class="ic" style="background:#E56900;border-radius:50%"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#fff"/></svg></span><div class="t"><b>Record</b><small>Saves the video with comments and hearts</small></div><button class="tog" type="button" role="switch" aria-checked="false" aria-label="Record" data-sw="record"></button></div>
           <div class="srow"><span class="ic" style="background:#1D6FE0;font:800 13px var(--body)">3</span><div class="t"><b>Countdown</b><small>Shows 3-2-1 before your live starts.</small></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Countdown" data-sw="countdown"></button></div>
           <div class="srow"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="#E0202B"><path d="M12 21s-7.500-4.600-9.600-9.300C.9 8.300 2.700 5 6 5c2 0 3.300 1.100 4 2.300C10.700 6.100 12 5 14 5c3.300 0 5.100 3.300 3.600 6.700C19.500 16.400 12 21 12 21z"/></svg></span><div class="t"><b>Day Ones</b><small>Fans wear a pink heart badge and sometimes join your club on screen.</small></div><button class="tog" type="button" role="switch" aria-checked="true" aria-label="Day Ones" data-sw="dayones"></button></div>
@@ -479,8 +483,8 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
     </div>
 <aside class="stage" aria-label="Live preview">
         <div class="seg" role="group" aria-label="Layout style">
-          <button type="button" data-layout="ig" aria-pressed="true">Instagram</button>
-          <button type="button" data-layout="tt" aria-pressed="false">TikTok</button>
+          <button type="button" data-layout="ig" aria-pressed="true">Classic</button>
+          <button type="button" data-layout="tt" aria-pressed="false">Vertical</button>
         </div>
         <div class="phone" role="img" aria-label="A Fake Famous simulated livestream with fans chatting">
           <div class="screen" id="screen" data-layout="ig" data-verified="1" data-crowd="0" data-don="1">
@@ -488,10 +492,12 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
               <source src="assets/hero.mp4" type="video/mp4">
             </video>
             <div class="scrim"></div>
+            <div class="simtag" aria-hidden="true">SIMULATED</div>
+            <div class="aitag">AI-generated demo performer</div>
 
             <div class="hud ig" aria-hidden="true">
               <div class="avatar">F</div>
-              <div class="who"><div class="nm">you.live <svg class="vf" width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.4l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><small>Live</small></div>
+              <div class="who"><div class="nm">you.live <svg class="vf" width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#FFB020"/><path d="M12 5.6l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#fff"/></svg></div><small>Live</small></div>
               <div class="livebadge">LIVE</div>
               <div class="pill"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span class="pv">35.5K</span></div>
               <div class="x"><svg width="12" height="12" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
@@ -503,7 +509,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
             </div>
 
             <div class="hud tt" aria-hidden="true">
-              <div class="cap"><div class="avatar">F</div><div class="who"><div class="nm">you.live <svg class="vf" width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#1D9BF0"/><path d="M7 12.4l3.2 3.2L17 8.8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><small><span id="lk">18.3K</span> likes</small></div><span class="follow">Follow</span></div>
+              <div class="cap"><div class="avatar">F</div><div class="who"><div class="nm">you.live <svg class="vf" width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#FFB020"/><path d="M12 5.6l1.9 3.9 4.3.6-3.1 3 .7 4.3-3.8-2-3.8 2 .7-4.3-3.1-3 4.3-.6z" fill="#fff"/></svg></div><small><span id="lk">18.3K</span> likes</small></div><span class="follow">Follow</span></div>
               <div class="gifters"><i></i><i></i><i></i></div>
               <div class="pill"><span class="pv">35.5K</span></div>
               <div class="x"><svg width="12" height="12" viewBox="0 0 24 24" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg></div>
@@ -573,11 +579,12 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       <h2>Questions</h2>
       <div class="faq">
         <details><summary>How much does it cost?</summary><p>Fake Famous Pro is €3.99 a month or €25.99 a year. You pay at checkout, get full access straight away, and the plan renews automatically until you cancel.</p></details>
-        <details><summary>Is anything actually broadcast?</summary><p>No. Fake Famous shows a simulated live screen on your own device. Nothing goes to Instagram, TikTok or any other platform, and no real people are watching.</p></details>
+        <details><summary>Is anything actually broadcast?</summary><p>No. Fake Famous shows a simulated live screen on your own device. Nothing goes to any social media platform, and no real people are watching.</p></details>
         <details><summary>Does it work on my phone?</summary><p>Yes. It runs in your browser on iPhone, Android and desktop. Add it to your home screen for a full-screen view.</p></details>
-        <details><summary>Can I post the recording?</summary><p>Recordings are yours to download. Use them for fun, skits and practice, and follow the rules of the platform you post on.</p></details>
+        <details><summary>Can I post the recording?</summary><p>Recordings are yours to download. Use them for fun, skits and practice. If you share one, make clear it's a simulation and follow the rules of the platform you post on.</p></details>
+        <details><summary>Can I use it to fake my followers or engagement?</summary><p>No. Fake Famous is for pranks, comedy and practice. Don't use it to claim a real audience, follower count, views or earnings, for example to win sponsorships, brand deals or donations. That breaks our Terms and we'll close accounts that do it.</p></details>
         <details><summary>How do I cancel or get a refund?</summary><p>Cancel any time from the link in your receipt email. Changed your mind? You can get a full refund within 30 days of any payment at paddle.net. Payments are handled by Paddle, our merchant of record. Refund terms are in our refund policy.</p></details>
-        <details><summary>Is Fake Famous connected to Instagram or TikTok?</summary><p>No. It's an independent app and is not affiliated with or endorsed by Instagram, TikTok or Meta. The layout names describe the style of live screen.</p></details>
+        <details><summary>Is Fake Famous connected to any social media app?</summary><p>No. It's an independent app and is not affiliated with or endorsed by any social media platform. The live screens are original designs, not copies of any app. The layout names describe the style of live screen.</p></details>
       </div>
       </div>
     </div>
@@ -585,7 +592,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
 
   <section class="finale band">
     <div class="wrap">
-      <h2>Go live to 35,000 people who don't exist.</h2>
+      <h2>Prank, rehearse or film a skit in front of 35,000 fans who don't exist.</h2>
       <div class="cta-row">
         <a class="btn grad" href="#pricing">Get Fake Famous Pro</a>
       </div>
@@ -602,7 +609,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       <a href="refunds.html">Refund policy</a>
       <a href="mailto:support@fakefamous.online">support@fakefamous.online</a>
     </nav>
-    <p>Fake Famous is a simulator for entertainment and practice. Nothing is broadcast. Not affiliated with Instagram, TikTok or Meta. Payments are processed by Paddle.com, our merchant of record.</p>
+    <p>Fake Famous is a simulator for entertainment and practice. Nothing is broadcast and the crowd is made up. Not affiliated with any social media platform. Payments are processed by Paddle.com, our merchant of record.</p>
   </div>
 </footer>
 

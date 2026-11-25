@@ -634,8 +634,8 @@ const CONFIG = {
   // No free trial: leave the trial period empty on both prices in Paddle, so checkout charges the plan price right away.
   paddle: {
     environment: 'sandbox',          // 'sandbox' while testing, 'production' when live
-    token: '',                       // Paddle client-side token (test_... or live_...)
-    prices: { monthly: '', yearly: '' }   // Paddle price IDs (pri_...)
+    token: 'test_e58f6a97c870bbf0cf97ddf2344', // Paddle client-side token (test_... or live_...)
+    prices: { monthly: 'pri_01m897sv323ha9zaanp7vj21rb', yearly: 'pri_01m897tr0p3badn0b1gxawdvfp' }   // Paddle price IDs (pri_...)
   },
   plans: {
     monthly: { amount: 3.99,  per: 'month', label: 'Pro monthly' },

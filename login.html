@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
+<title>Sign in · Fake Famous</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--card:#17171A;--lift:#26262C;--line:rgba(255,255,255,.1);--mute:rgba(255,255,255,.66);--dim:rgba(255,255,255,.44);--red:#F0284A;--grad:linear-gradient(90deg,#EF2D47,#FF8812);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#000;color:#fff;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;padding:24px}
+.box{width:100%;max-width:380px;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:30px 24px}
+.logo{font-family:'Anton','Arial Narrow',Impact,sans-serif;font-size:30px;letter-spacing:.5px;text-decoration:none;color:#fff;display:block;margin-bottom:18px}
+.logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:20px;margin:0 0 6px}
+p{color:var(--mute);font-size:14px;line-height:1.5;margin:0 0 18px}
+label{display:block;font-size:13px;color:var(--dim);margin-bottom:6px}
+input{width:100%;font:inherit;font-size:16px;color:#fff;background:var(--lift);border:1px solid var(--line);border-radius:12px;padding:13px 14px;outline:none}
+input:focus{border-color:rgba(255,255,255,.35)}
+#code{font-size:26px;letter-spacing:10px;text-align:center;font-weight:800}
+button{width:100%;margin-top:14px;font:inherit;font-weight:800;font-size:16px;color:#fff;background:var(--grad);border:0;border-radius:999px;padding:14px;cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+.link{background:none;color:var(--mute);font-weight:600;font-size:14px;padding:8px;margin-top:8px}
+.err{color:#ff6b81;font-size:14px;min-height:20px;margin-top:12px}
+.err a{color:#fff}
+.hide{display:none}
+.foot{margin-top:18px;font-size:13px;color:var(--dim);text-align:center}
+.foot a{color:var(--mute)}
+</style>
+</head>
+<body>
+<main class="box">
+  <a class="logo" href="/">FAKE <span>FAMOUS</span></a>
+
+  <form id="stepEmail">
+    <h1>Sign in to the app</h1>
+    <p id="intro">Enter the email you used to pay. We'll send you a 6-digit code.</p>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="email" inputmode="email" required placeholder="you@example.com">
+    <button id="sendBtn" type="submit">Send code</button>
+    <div class="err" id="err1" role="alert"></div>
+  </form>
+
+  <form id="stepCode" class="hide">
+    <h1>Check your email</h1>
+    <p>We sent a code to <b id="sentTo"></b>. It expires in 10 minutes.</p>
+    <label for="code">Code</label>
+    <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="\d{6}" required placeholder="••••••">
+    <button id="verifyBtn" type="submit">Sign in</button>
+    <button class="link" id="backBtn" type="button">Use a different email</button>
+    <div class="err" id="err2" role="alert"></div>
+  </form>
+
+  <div class="foot">No subscription yet? <a href="/#pricing">Get Pro</a></div>
+</main>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  var next=q.get('next')||'/app/';
+  if(!/^\/app\/?(\?[^#]*)?$/.test(next))next='/app/';
+  var $=function(id){return document.getElementById(id)};
+  if(q.get('lapsed'))$('intro').textContent="Your subscription isn't active anymore. Renew it, then sign in again with the email you paid with.";
+  var saved='';try{saved=localStorage.getItem('ff_email')||''}catch(e){}
+  $('email').value=q.get('email')||saved;
+
+  function post(url,body){
+    return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),credentials:'same-origin'})
+      .then(function(r){return r.json().catch(function(){return{}}).then(function(d){d._status=r.status;return d})});
+  }
+  function showErr(el,d){
+    el.textContent=d.error||'Something went wrong. Try again.';
+    if(d.nosub){el.appendChild(document.createTextNode(' '));var a=document.createElement('a');a.href='/#pricing';a.textContent='See plans';el.appendChild(a)}
+  }
+
+  $('stepEmail').addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=$('email').value.trim();if(!email)return;
+    $('sendBtn').disabled=true;$('err1').textContent='';
+    post('/api/login/start',{email:email}).then(function(d){
+      $('sendBtn').disabled=false;
+      if(!d.ok)return showErr($('err1'),d);
+      try{localStorage.setItem('ff_email',email)}catch(e){}
+      $('sentTo').textContent=email;
+      $('stepEmail').classList.add('hide');$('stepCode').classList.remove('hide');
+      $('code').value='';$('code').focus();
+    }).catch(function(){$('sendBtn').disabled=false;$('err1').textContent='Network problem. Check your connection and try again.'});
+  });
+
+  $('stepCode').addEventListener('submit',function(e){
+    e.preventDefault();
+    var code=$('code').value.replace(/\D/g,'');if(code.length!==6)return;
+    $('verifyBtn').disabled=true;$('err2').textContent='';
+    post('/api/login/verify',{email:$('email').value.trim(),code:code}).then(function(d){
+      if(d.ok){location.replace(next);return}
+      $('verifyBtn').disabled=false;showErr($('err2'),d);
+    }).catch(function(){$('verifyBtn').disabled=false;$('err2').textContent='Network problem. Check your connection and try again.'});
+  });
+  $('code').addEventListener('input',function(){
+    this.value=this.value.replace(/\D/g,'').slice(0,6);
+    if(this.value.length===6)$('stepCode').requestSubmit();
+  });
+  $('backBtn').addEventListener('click',function(){
+    $('stepCode').classList.add('hide');$('stepEmail').classList.remove('hide');$('email').focus();
+  });
+})();
+</script>
+</body>
+</html>

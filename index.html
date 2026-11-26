@@ -913,11 +913,13 @@ snd.addEventListener('click', () => {
 });
 
 /* ---------- app links ---------- */
+let paidEmail = '';   // set when Paddle checkout completes, used to prefill the sign-in page
 function appHref(welcome) {
   const u = new URL(CONFIG.appUrl);
   u.searchParams.set('lang', state.lang);
   if (ref) u.searchParams.set('ref', ref);
   if (welcome) u.searchParams.set('welcome', '1');
+  if (welcome && paidEmail) u.searchParams.set('email', paidEmail);
   return u.toString();
 }
 $$('[data-app-link]').forEach(a => {
@@ -949,7 +951,7 @@ const err = $('#payErr');
 
 function onPaddleEvent(e) {
   if (!e || !e.name) return;
-  if (e.name === 'checkout.completed') justPaid = true;
+  if (e.name === 'checkout.completed') { justPaid = true; try { paidEmail = (e.data && e.data.customer && e.data.customer.email) || ''; } catch (x) {} }
   if (e.name === 'checkout.closed' && justPaid) { justPaid = false; $('#okDlg').showModal(); }
   if (e.name === 'checkout.error' || e.name === 'checkout.payment.failed')
     err.textContent = 'The payment did not go through. Check your card details or try another card.';

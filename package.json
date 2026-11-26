@@ -1,0 +1,8 @@
+{
+  "name": "fake-famous-site",
+  "private": true,
+  "description": "Fake Famous landing page + paid-only app server",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=20" }
+}

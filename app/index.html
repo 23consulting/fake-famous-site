@@ -1387,6 +1387,7 @@ function runCountdown(done){
 }
 $("goLive").addEventListener("click",function(){
   $("preScrim").classList.remove("on");
+  enterFS();
   if(S.cd!==false)runCountdown(startLive);else startLive();
 });
 
@@ -1534,6 +1535,18 @@ function lockScreen(){
   }}catch(e){}
 }
 function unlockScreen(){if(wl){try{wl.release()}catch(e){}wl=null}}
+/* go fullscreen while live (needs a tap, so it is called from click handlers) */
+function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement||null}
+function enterFS(){
+  try{if(fsEl())return;var d=document.documentElement,f=d.requestFullscreen||d.webkitRequestFullscreen;
+    if(f){var r=f.call(d,{navigationUI:"hide"});if(r&&r.catch)r.catch(function(){})}}catch(e){}
+}
+function exitFS(){
+  try{if(!fsEl())return;var f=document.exitFullscreen||document.webkitExitFullscreen;
+    if(f){var r=f.call(document);if(r&&r.catch)r.catch(function(){})}}catch(e){}
+}
+/* if fullscreen was dropped mid-stream (Esc, app switch), the next tap on the live screen restores it */
+$("live").addEventListener("click",function(){if(live&&!fsEl())enterFS()},true);
 document.addEventListener("visibilitychange",function(){if(live&&document.visibilityState==="visible"&&!wl)lockScreen()});
 
 function flip(e){if(e)e.stopPropagation();front=!front;S.facing=front?"user":"environment";save();startCam()}
@@ -1731,7 +1744,7 @@ function startLive(){
 
 function endLive(){
   if(!live)return;live=false;
-  [viewTick,likeTick,heartTick,gifterTick,recTimer].forEach(clearInterval);recTimer=null;unlockScreen();scriptTimers.forEach(clearTimeout);scriptTimers=[];$("ctl").classList.remove("on");
+  [viewTick,likeTick,heartTick,gifterTick,recTimer].forEach(clearInterval);recTimer=null;unlockScreen();exitFS();scriptTimers.forEach(clearTimeout);scriptTimers=[];$("ctl").classList.remove("on");
   [chatTimer,giftTimer,viewDrift].forEach(clearTimeout);
   reactTimers.forEach(clearTimeout);reactTimers=[];
   var mins=Math.max(1,Math.round((Date.now()-startedAt)/60000));

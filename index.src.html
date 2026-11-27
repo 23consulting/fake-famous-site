@@ -18,7 +18,7 @@
 <!--
   SETUP CHECKLIST (all settings live in the CONFIG object near the bottom of this file)
   1. Put your influencer clip at assets/hero.mp4 (vertical 9:16, under 6 MB, H.264) and a still frame at assets/hero-poster.jpg.
-  2. Paddle: add your client-side token and the two price IDs. Start with environment "sandbox".
+  2. Paddle: live client-side token and live price IDs (environment "production"). Sandbox values: token test_e58f6a97c870bbf0cf97ddf2344, prices pri_01m897sv323ha9zaanp7vj21rb / pri_01m897tr0p3badn0b1gxawdvfp.
   3. Set showVideoHint to false once the video is in.
   4. Replace the legal link targets and support email in the footer.
   Design source: colors, fonts and UI patterns are taken from the live app (black base, #17171A cards, Anton wordmark, Inter, red/orange gradient).
@@ -640,9 +640,9 @@ const CONFIG = {
   showVideoHint: false,              // true shows a "add video" note when assets/hero.mp4 is missing
   // No free trial: leave the trial period empty on both prices in Paddle, so checkout charges the plan price right away.
   paddle: {
-    environment: 'sandbox',          // 'sandbox' while testing, 'production' when live
-    token: 'test_e58f6a97c870bbf0cf97ddf2344', // Paddle client-side token (test_... or live_...)
-    prices: { monthly: 'pri_01m897sv323ha9zaanp7vj21rb', yearly: 'pri_01m897tr0p3badn0b1gxawdvfp' }   // Paddle price IDs (pri_...)
+    environment: 'production',       // 'sandbox' while testing, 'production' when live
+    token: 'live_53ce759745126d91c5eebbb31a4', // Paddle client-side token (test_... or live_...)
+    prices: { monthly: 'pri_01m8er6rr4yej78tq65kbjx4g8', yearly: 'pri_01m8er7ef9fywr9k4nhvm6xc61' }   // Paddle price IDs (pri_...)
   },
   plans: {
     monthly: { amount: 3.99,  per: 'month', label: 'Pro monthly' },

@@ -37,8 +37,8 @@ button:disabled{opacity:.55;cursor:default}
   <a class="logo" href="/">FAKE <span>FAMOUS</span></a>
 
   <form id="stepEmail">
-    <h1>Sign in to the app</h1>
-    <p id="intro">Enter the email you used to pay. We'll send you a 6-digit code.</p>
+    <h1>Sign in or start free</h1>
+    <p id="intro">Enter your email and we'll send you a 6-digit code. New here? You start on the free plan, no card needed. Pro members: use the email you paid with.</p>
     <label for="email">Email</label>
     <input id="email" type="email" autocomplete="email" inputmode="email" required placeholder="you@example.com">
     <button id="sendBtn" type="submit">Send code</button>
@@ -55,7 +55,7 @@ button:disabled{opacity:.55;cursor:default}
     <div class="err" id="err2" role="alert"></div>
   </form>
 
-  <div class="foot">No subscription yet? <a href="/#pricing">Get Pro</a></div>
+  <div class="foot">Want no time limit or watermark? <a href="/#pricing">See Pro</a></div>
 </main>
 <script>
 (function(){
@@ -63,8 +63,7 @@ button:disabled{opacity:.55;cursor:default}
   var next=q.get('next')||'/app/';
   if(!/^\/app\/?(\?[^#]*)?$/.test(next))next='/app/';
   var $=function(id){return document.getElementById(id)};
-  if(q.get('lapsed'))$('intro').textContent="Your subscription isn't active anymore. Renew it, then sign in again with the email you paid with.";
-  var saved='';try{saved=localStorage.getItem('ff_email')||''}catch(e){}
+    var saved='';try{saved=localStorage.getItem('ff_email')||''}catch(e){}
   $('email').value=q.get('email')||saved;
 
   function post(url,body){

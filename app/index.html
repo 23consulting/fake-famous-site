@@ -427,6 +427,41 @@ svg{display:block}
 #endcard .ghost{background:#26262c;color:#fff}
 
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* ---------- Free plan ---------- */
+#planBar{display:flex;align-items:center;gap:10px;margin-top:10px;background:linear-gradient(90deg,rgba(239,45,71,.16),rgba(255,136,18,.12));border:1px solid rgba(255,136,18,.35);border-radius:14px;padding:9px 10px 9px 14px;font-size:.82rem;line-height:1.3}
+#planBar .t{flex:1;min-width:0}
+#planBar b{color:#fff}
+#planBar span{color:var(--ink-dim)}
+#planBar button{flex:none;background:linear-gradient(95deg,#f0284a,#ff8a12);color:#fff;font-weight:800;font-size:.8rem;border-radius:999px;padding:8px 14px}
+.chip.prolock{opacity:.5}
+.chip.prolock::after{content:" 🔒";font-size:.75em}
+.prorow{position:relative;cursor:pointer}
+.prorow>*:not(.lab){pointer-events:none;opacity:.42}
+.prorow .lab::after{content:"PRO";margin-left:8px;font-size:.62rem;font-weight:800;letter-spacing:.08em;color:#fff;background:linear-gradient(95deg,#f0284a,#ff8a12);border-radius:6px;padding:3px 6px;vertical-align:2px}
+#freeMark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:61;pointer-events:none;text-align:center;color:rgba(255,255,255,.62);background:rgba(0,0,0,.26);border-radius:16px;padding:9px 16px 8px;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+#freeMark .a{font:600 11px/1.2 system-ui,sans-serif;letter-spacing:.06em}
+#freeMark .b{font:400 24px/1.05 'Anton','Arial Narrow',Impact,sans-serif;letter-spacing:.04em;text-transform:uppercase}
+#freeMark .c{font:600 11px/1.2 system-ui,sans-serif;opacity:.85}
+#freeTimer{position:absolute;left:50%;top:calc(50% - 86px);transform:translateX(-50%);z-index:62;font:800 13px/1 system-ui,sans-serif;color:#fff;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:7px 12px;font-variant-numeric:tabular-nums;pointer-events:none}
+#freeTimer.warn{background:#f0284a;border-color:#f0284a}
+#endUp{max-width:360px;width:100%;background:#17171a;border:1px solid rgba(255,136,18,.35);border-radius:20px;padding:18px 18px 16px;text-align:left}
+#endUp .uph{font-size:1.15rem;font-weight:800;margin:0 0 6px}
+#endUp ul,#upsell ul{list-style:none;margin:10px 0 14px;padding:0;display:grid;gap:7px}
+#endUp li,#upsell li{font-size:.9rem;color:#fff;padding-left:24px;position:relative}
+#endUp li::before,#upsell li::before{content:"✓";position:absolute;left:0;top:0;width:17px;height:17px;border-radius:50%;background:#1fc27e;color:#fff;font-size:.7rem;font-weight:900;display:grid;place-items:center}
+#endUp .left,#upsell .left{font-size:.82rem;color:var(--ink-dim);margin:10px 0 0;text-align:center}
+#endcard #endUp .gopro,#upsell .gopro{text-decoration:none;display:block;width:100%;text-align:center;background:linear-gradient(95deg,#f0284a,#ff8a12);color:#fff;border-radius:999px;padding:14px 18px;font-weight:800;font-size:.98rem}
+#endcard #endUp .st{text-align:left;margin:0 0 6px}
+#upsell{position:fixed;inset:0;z-index:90;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.72)}
+#upsell.on{display:flex}
+#upsell .box{width:100%;max-width:440px;background:#16161a;border-radius:24px 24px 0 0;padding:22px 20px calc(env(safe-area-inset-bottom,0px) + 18px);border:1px solid #2a2a31}
+#upsell h3{margin:0 0 4px;font-size:1.3rem;font-weight:800}
+#upsell .sub{color:var(--ink-dim);font-size:.9rem;line-height:1.4;margin:0}
+#upsell .price{font-size:.82rem;color:var(--ink-dim);text-align:center;margin:8px 0 0}
+#upsell .later{display:block;width:100%;margin-top:6px;padding:12px;color:var(--ink-dim);font-weight:600;font-size:.9rem}
+#ffToast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 26px);transform:translateX(-50%);z-index:95;background:#fff;color:#111;font-weight:700;font-size:.9rem;border-radius:999px;padding:12px 18px;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none}
+#ffToast.on{display:block}
 </style>
 </head>
 <body>
@@ -439,6 +474,7 @@ svg{display:block}
       <select id="langSel" aria-label="Language"></select>
     </div>
     <div class="support"><b>For entertainment purposes only.</b> <span>Simulated stream, nothing is broadcast.</span></div>
+    <div id="planBar" class="hide" data-dyn></div>
     <div id="tabs" role="tablist">
       <button role="tab" data-pane="basic" aria-selected="true">Basic</button>
       <button role="tab" data-pane="audience" aria-selected="false">Audience</button>
@@ -685,6 +721,8 @@ svg{display:block}
 <!-- ================= LIVE ================= -->
 <div id="live">
   <div id="simTag" aria-hidden="true">SIMULATED</div>
+  <div id="freeMark" class="hide" aria-hidden="true" data-dyn><div class="a">MADE WITH</div><div class="b">Fake Famous</div><div class="c">fakefamous.online</div></div>
+  <div id="freeTimer" class="hide" data-dyn></div>
   <video id="camBg" playsinline autoplay muted aria-hidden="true"></video>
   <video id="cam" playsinline autoplay muted></video>
   <div id="camfail"><div class="in">
@@ -793,8 +831,20 @@ svg{display:block}
   <h3>Stream ended</h3>
   <p class="st" id="endStats" data-dyn></p>
   <a id="dlLink" class="hide" download="stream.webm">Download recording</a>
+  <div id="endUp" class="hide" data-dyn></div>
   <button class="ghost" id="backBtn">Back to setup</button>
 </div>
+
+<div id="upsell" role="dialog" aria-modal="true" aria-labelledby="upT" data-dyn><div class="box">
+  <h3 id="upT"></h3>
+  <p class="sub" id="upSub"></p>
+  <ul><li>Streams with no time limit</li><li>No watermark, HD recordings</li><li>All 12 languages</li><li>Scripted comments, timeline and saved presets</li></ul>
+  <a class="gopro" href="/?upgrade=1#pricing">Get Pro</a>
+  <p class="price">€3.99 a month or €25.99 a year. Cancel any time.</p>
+  <p class="left" id="upLeft"></p>
+  <button class="later" id="upLater" type="button">Not now</button>
+</div></div>
+<div id="ffToast" role="status" data-dyn></div>
 
 <script>
 (function(){
@@ -850,6 +900,26 @@ if(S.naija){S.fans="ng";delete S.naija}
 if(S.lang==="en-GB"){S.fans="uk";S.lang="en"}
 LANG=(S.lang&&LANGS.some(function(x){return x[0]===S.lang}))?S.lang:detectLang();
 function save(){try{localStorage.setItem("golive.v2",JSON.stringify(S))}catch(e){}}
+
+/* =============== PLAN (decided by the server) =============== */
+/* The server sends window.FF_PLAN with the page and counts every free stream itself.
+   Nothing here can grant Pro or extra free streams; it only shows the right screens. */
+var PLAN=window.FF_PLAN||{plan:"free",seconds:60,limit:2};
+var FREE=PLAN.plan!=="pro";
+var FANS_EN={us:1,uk:1,au:1,ie:1,ca:1,"in":1,za:1,jm:1,ng:1};
+if(FREE){
+  if(Array.isArray(S.fans))S.fans=S.fans.filter(function(k){return FANS_EN[k]});
+  else if(S.fans&&S.fans!=="auto"&&!FANS_EN[S.fans])S.fans=[];
+}
+var TICKET=null,freeTimer=null,beatTimer=null,endWhy="",toastT=null;
+function ffToast(msg,ms){var t=document.getElementById("ffToast");if(!t)return;t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove("on")},ms||3200)}
+function clock(n){n=Math.max(0,n);return Math.floor(n/60)+":"+("0"+(n%60)).slice(-2)}
+function leftText(){
+  if(PLAN.left==null)return "";
+  if(PLAN.left>0)return PLAN.left===1?"1 free stream left today.":PLAN.left+" free streams left today.";
+  return "No free streams left today. You get "+PLAN.limit+" more tomorrow (midnight UTC).";
+}
+function goPro(){location.href="/?upgrade=1#pricing"}
 
 /* ---------- content ---------- */
 var FIRST="ava mia liam noah ella zoe kai jade finn ruby leo nova max luna cole iris wren tate skye rio jax remy sage otis blue cleo dash indy juno kit mara nash opal pax quinn reese sol tess uma vero wes xan yuri zeke bee cruz dove echo".split(" ");
@@ -1183,7 +1253,7 @@ function paintFans(){
   var w=$("fansChips");if(!w)return;
   if(!w.children.length){
     LANGS.forEach(function(l){if(l[0]!=="en")FANOPT.push([l[0],l[1]])});
-    FANOPT.forEach(function(x){var b=document.createElement("button");b.className="chip";b.dataset.fan=x[0];b.textContent=x[1];w.appendChild(b)});
+    FANOPT.forEach(function(x){var b=document.createElement("button");b.className="chip";b.dataset.fan=x[0];b.textContent=x[1];if(FREE&&x[0]!=="auto"&&!FANS_EN[x[0]])b.classList.add("prolock");w.appendChild(b)});
   }
   var sel=fanList();
   Array.prototype.forEach.call(w.children,function(b){
@@ -1244,6 +1314,7 @@ function paintPresets(){
   });
 }
 $("savePreset").addEventListener("click",function(){
+  if(FREE){showUpsell("preset");return}
   var n=$("presetName").value.trim();if(!n)return;
   var l=getPresets();l.unshift({name:n,cfg:JSON.parse(JSON.stringify(S))});setPresets(l.slice(0,20));
   $("presetName").value="";paintPresets();
@@ -1386,10 +1457,35 @@ function runCountdown(done){
   cdTimer=setInterval(function(){n--;if(n<=0)end();else paint()},800);
 }
 $("goLive").addEventListener("click",function(){
-  $("preScrim").classList.remove("on");
+  var btn=this;if(btn.disabled)return;btn.disabled=true;
   enterFS();
-  if(S.cd!==false)runCountdown(startLive);else startLive();
+  getTicket().then(function(ok){
+    btn.disabled=false;
+    if(!ok){exitFS();return}
+    $("preScrim").classList.remove("on");
+    if(S.cd!==false)runCountdown(startLive);else startLive();
+  });
 });
+/* Ask the server for a stream ticket. Free streams are counted there, not here. */
+function getTicket(){
+  TICKET=null;
+  return fetch("/api/stream/start",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:"{}"})
+    .then(function(r){return r.json().catch(function(){return{}}).then(function(d){d._s=r.status;return d})})
+    .then(function(d){
+      if(d._s===401){location.href="/login?next=%2Fapp%2F";return false}
+      if(d.ok){
+        if((d.plan==="pro")===FREE){location.reload();return false}
+        TICKET=d;if(FREE){PLAN.left=d.left;paintPlan()}
+        return true;
+      }
+      if(d.limit){PLAN.left=0;paintPlan();$("preScrim").classList.remove("on");showUpsell(d.limit==="network"?"network":"limit");return false}
+      ffToast(d.error||"Couldn't start the stream. Try again.");return false;
+    })
+    .catch(function(){
+      if(!FREE)return true; /* Pro keeps working through a network blip */
+      ffToast("No connection. Free streams need the internet to start.");return false;
+    });
+}
 
 /* =============== LIVE =============== */
 var cam=$("cam"),stream=null,front=true,rec=null,chunks=[],chatTimer=null,giftTimer=null,
@@ -1668,16 +1764,18 @@ function drawFrame(){
     x.fillStyle=h.col;x.fill(HPATH);x.strokeStyle="rgba(255,255,255,.3)";x.lineWidth=1;x.stroke(HPATH);x.restore();
   });
   x.globalAlpha=1;x.shadowBlur=0;
+  if(FREE)drawMark(x,W,H,u);
   }catch(e){}
 }
 function startRec(st){
   try{
     if(!window.MediaRecorder)return;
+    if(FREE&&!HTMLCanvasElement.prototype.captureStream)return; /* free recordings must carry the watermark */
     var mt=["video/webm;codecs=vp9","video/webm;codecs=vp8","video/webm","video/mp4"].filter(function(t){return MediaRecorder.isTypeSupported(t)})[0];
     var src=st;
     if(HTMLCanvasElement.prototype.captureStream){
       var cv=document.createElement("canvas"),land=innerWidth>innerHeight*1.1;
-      cv.width=land?1280:720;cv.height=land?720:1280;
+      cv.width=FREE?(land?854:480):(land?1280:720);cv.height=FREE?(land?480:854):(land?720:1280);
       bgc=document.createElement("canvas");bgc.width=Math.round(cv.width/24);bgc.height=Math.round(cv.height/24);
       recCv=cv;loadPhoto();RG=[];RH=[];drawFrame();
       src=cv.captureStream(30);
@@ -1685,7 +1783,8 @@ function startRec(st){
       recTimer=setInterval(drawFrame,33);
     }
     chunks=[];
-    try{rec=new MediaRecorder(src,mt?{mimeType:mt,videoBitsPerSecond:4000000}:{videoBitsPerSecond:4000000})}
+    var vbr=FREE?1200000:4000000;
+    try{rec=new MediaRecorder(src,mt?{mimeType:mt,videoBitsPerSecond:vbr}:{videoBitsPerSecond:vbr})}
     catch(e){rec=new MediaRecorder(src)}
     rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
     rec.start(1000);$("recdot").classList.add("on");
@@ -1704,8 +1803,8 @@ function paintCounts(){
 
 function startLive(){
   live=true;startedAt=Date.now();giftsSent=0;peak=0;burst=0;spam=null;lv=1;RC=[];said={};slow=false;paused=false;resetCtl();lockScreen();
-  scriptTimers=parseScript(S.script).map(function(l){return setTimeout(function(){if(live){claim(l.text);comment({text:l.text,name:l.name})}},Math.max(600,l.t*1000))});
-  scriptTimers=scriptTimers.concat((S.plan||[]).map(function(e){return setTimeout(function(){if(live)runPlan(e)},Math.max(600,e.t*1000))}));
+  scriptTimers=(FREE?[]:parseScript(S.script)).map(function(l){return setTimeout(function(){if(live){claim(l.text);comment({text:l.text,name:l.name})}},Math.max(600,l.t*1000))});
+  scriptTimers=scriptTimers.concat((FREE?[]:(S.plan||[])).map(function(e){return setTimeout(function(){if(live)runPlan(e)},Math.max(600,e.t*1000))}));
   front=S.facing==="user";
   var L=$("live");
   L.classList.toggle("lay-ig",IG());L.classList.toggle("lay-tt",!IG());
@@ -1740,10 +1839,11 @@ function startLive(){
   chatTimer=setTimeout(chatLoop,R(1300,1900));
   if(S.donOn)giftTimer=setTimeout(sendGift,R(2500,6000));
   for(var i=0;i<4;i++)setTimeout(comment,i*260);
+  startPlanTimers();
 }
 
 function endLive(){
-  if(!live)return;live=false;
+  if(!live)return;live=false;stopPlanTimers();
   [viewTick,likeTick,heartTick,gifterTick,recTimer].forEach(clearInterval);recTimer=null;unlockScreen();exitFS();scriptTimers.forEach(clearTimeout);scriptTimers=[];$("ctl").classList.remove("on");
   [chatTimer,giftTimer,viewDrift].forEach(clearTimeout);
   reactTimers.forEach(clearTimeout);reactTimers=[];
@@ -1766,7 +1866,7 @@ function endLive(){
   warmStream=null;warmFacing=null;stream=null;cam.srcObject=null;camBg.srcObject=null;camBg.removeAttribute("src");
   if(vidMode||vidURL){cam.pause();cam.removeAttribute("src");cam.load();if(vidURL)URL.revokeObjectURL(vidURL);vidURL=null;vidMode=false}
   stopPreview();setCamStatus("","Camera released","Tap Enable to turn it back on before your next stream.");
-  $("live").classList.remove("on");$("endcard").classList.add("on");
+  $("live").classList.remove("on");paintEndUp();$("endcard").classList.add("on");
 }
 all(".endb").forEach(function(b){b.addEventListener("click",function(e){e.stopPropagation();endLive()})});
 $("backBtn").addEventListener("click",function(){
@@ -2103,12 +2203,12 @@ AUD["en-IN"]={"L": {"hype": ["arre this is mast yaar", "LET'S GOOO 🔥", "first
 AUD["en-ZA"]={"L": {"hype": ["this is lekker bru", "LET'S GOOO 🔥", "first time catching you live", "how many people are here??", "🔥🔥🔥🔥", "yoh i'm screaming", "best stream on here ja", "been waiting all day for this", "turn it up bru", "you're trending ja", "this is going viral", "telling all my china's"], "hater": ["this is mid ngl bru", "why is anyone watching this", "eish someone thinks they're famous 💀", "turn the camera off", "the lighting is terrible", "nobody asked", "ag shame this is embarrassing", "who told you to go live", "zero personality", "only here for the comments", "cringe", "hard pass"], "happy": ["howzit how's your day going", "good vibes in here", "hope you're having a lekker day", "so glad i found this", "this made my night", "hello from mzansi 🇿🇦", "thanks for going live", "exactly what i needed", "you always cheer me up", "happy to be here", "keep smiling", "best part of my day"], "flirty": ["okay but you're actually cute 😳", "who gave you the right", "the smile got me", "single? asking for a friend", "yoh you're so cute", "i'd move for you ngl", "marry me", "you know what you're doing", "can i get a wink", "my type exactly", "how are you real", "okay heart eyes"], "funny": ["not the camera angle 😭", "let him cook", "chat is unwell today", "my phone is overheating watching this", "respectfully what was that", "imagine explaining this to your boss", "not me watching at 3am", "chat is cooked", "absolute scenes", "yoh 😭", "eish", "i'm dead"], "curious": ["where are you from?", "what phone are you using?", "how long are you going for?", "what's the song?", "do you stream every day?", "what do you do for work?", "what time is it there?", "how did you get started?", "what's your favourite part of this?", "are you doing a giveaway?", "who's behind the camera?", "how many followers now?", "what's in the background?", "is that your real accent?", "what got you into this?", "do you have a schedule?", "which city is that?", "first stream or nah?", "what's your @?", "any tips for beginners?"]}, "J": ["Howzit! joined as soon as i saw you were live", "just got here!", "hiiiiii", "omg you're live", "finally caught you live", "came running", "first!!", "been waiting for this"], "N": ["{n} you're the best", "howzit {n} 👋", "{n} say hi to me", "{n} answer my question", "yo {n}", "{n} how's it going", "{n} love your streams", "shout me out {n}"], "P": ["omg ", "ngl ", "wait ", "bru ", "ok but ", "honestly ", "ag ", "yoh ", "eish ", "ja ", "not gonna lie ", "lol "], "S": [" 😭", " 🔥", " 😂", " 💀", " bru", " ja", " 🙌", " 👀", " !!", " 💯", " lekker", " hey"], "R": {"yesno": ["yes!!", "nah", "100%", "yesss", "no ways", "i think so", "ja nee", "maybe??", "literally yes", "YES", "nooo", "kinda??", "absolutely", "not even close", "obviously", "ja definitely", "hard no", "depends lol", "no idea", "definitely", "nope 😂"], "question": ["good question", "depends lol", "no idea", "what do you think?", "ask me again lol", "same question", "was gonna ask the same", "wait answer mine too", "what 😭", "just got off work", "been here since the start", "two hours deep lol", "on my lunch break", "in bed lol", "at work shh", "first time here", "every day", "since day one", "10/10", "honestly everything", "you tell us!", "the vibes obviously", "music 🎶", "food always 🍕", "can't decide lol"], "hello": ["hiii 👋", "heyyy", "howzit {n}!!", "sharp sharp", "hey hey", "👋👋👋", "hii {n} 💕", "howzit", "finally caught you live", "hiiii"], "thanks": ["no worries!!", "anytime 💕", "wouldn't miss it", "always here for you", "❤️❤️", "you deserve it", "love you {n}", "thank YOU"], "follow": ["followed!!", "just followed 🙌", "done ✅", "already following", "followed + notifs on", "sharing this now", "sent to the group chat"], "gift": ["sending one now 🌹", "sent you something 👀", "say less", "on it 💸", "here you go {n}"], "generic": ["real", "FR", "LMAOO", "😂😂😂", "so true", "agreed", "haha yes", "no because same", "this ^^", "😭😭", "say it louder", "facts", "W", "lol", "💯"], "hater": ["nobody asked 💀", "ok and?", "ratio", "be serious", "who cares", "L take", "mid", "sure mate"], "flirty": ["anything for you 😍", "stop i'm blushing", "say my name next 😳", "😍😍", "you're so cute when you talk", "marry me"], "hype": ["LET'S GO", "🔥🔥🔥", "YESSIR", "goated", "absolute legend 👑", "say it again!!"], "where": ["joburg", "cape town", "durban", "pretoria", "port elizabeth", "bloemfontein", "soweto", "sandton", "stellenbosch", "east london", "polokwane", "pietermaritzburg", "nelspruit", "the cape", "the vaal", "same city as you 👀", "london 🇬🇧", "perth 🇦🇺"]}};
 AUD["en-JM"]={"L": {"hype": ["dis yah fire mi seh 🔥", "LETS GOOO 🔥", "first time mi ketch yuh live", "how many people deh yah??", "🔥🔥🔥🔥", "mi a scream", "dis a mi favourite stream", "mi wait all day fi dis", "turn it up", "yuh trending yow", "dis a go viral", "mi a tell everybody"], "hater": ["dis weak ngl", "why anybody a watch dis", "him think him famous 💀", "turn off di camera", "di light bad", "nobody nuh ask", "dis embarrassing", "who tell yuh fi go live", "zero personality", "mi deh yah fi di comments", "cringe", "hard pass"], "happy": ["wah gwan how yuh day a go", "good vibes yah so", "hope yuh have a nice day", "glad mi find dis", "dis mek mi night", "big up yuhself", "tanks fi going live", "exactly wah mi need", "yuh always cheer mi up", "happy fi deh yah", "keep smiling", "best part of mi day"], "flirty": ["yow yuh cute fi real 😳", "who give yuh di right", "di smile get mi", "yuh single? mi a ask fi mi friend", "stop look so good", "mi would move fi yuh", "marry mi", "yuh know wah yuh a do", "can mi get a wink", "mi type exactly", "how yuh real so", "heart eyes"], "funny": ["not di camera angle 😭", "let him cook", "chat nuh well today", "mi phone a overheat", "respectfully wah dat", "imagine explain dis to yuh boss", "mi up a 3am a watch dis", "chat cooked", "absolute scenes", "mi dead 😭", "lawd 😭", "a wah dis"], "curious": ["where are you from?", "what phone are you using?", "how long are you going for?", "what's the song?", "do you stream every day?", "what do you do for work?", "what time is it there?", "how did you get started?", "what's your favourite part of this?", "are you doing a giveaway?", "who's behind the camera?", "how many followers now?", "what's in the background?", "is that your real accent?", "what got you into this?", "do you have a schedule?", "which city is that?", "first stream or nah?", "what's your @?", "any tips for beginners?"]}, "J": ["Hiiii mi join as mi see yuh live!", "just reach!", "hiiiiii", "omg yuh live", "finally mi ketch yuh live", "mi run come", "first!!", "mi a wait fi dis"], "N": ["{n} yuh di best", "wah gwan {n} 👋", "{n} say hi to mi", "{n} answer mi question", "yow {n}", "{n} how yuh deh", "{n} mi love yuh streams", "shout mi out {n}"], "P": ["omg ", "yow ", "wait ", "bredda ", "ok but ", "honestly ", "fam ", "lawd ", "haha ", "mi seh ", "big up ", "bless "], "S": [" 😭", " 🔥", " 😂", " 💀", " yow", " fi real", " 🙌", " 👀", " !!", " 💯", " mi seh", " bredda"], "R": {"yesno": ["yes!!", "nuh", "100%", "yesss", "no way", "mi think so", "fi real", "maybe??", "literally yes", "YES", "nooo", "kinda??", "absolutely", "not even close", "obviously", "yeah mon", "hard no", "depends lol", "mi nuh know", "definitely", "nope 😂"], "question": ["good question", "depends lol", "no idea", "what do you think?", "ask me again lol", "same question", "was gonna ask the same", "wait answer mine too", "what 😭", "just got off work", "been here since the start", "two hours deep lol", "on my lunch break", "in bed lol", "at work shh", "first time here", "every day", "since day one", "10/10", "honestly everything", "you tell us!", "the vibes obviously", "music 🎶", "food always 🍕", "can't decide lol"], "hello": ["hiii 👋", "wah gwan", "hi {n}!!", "yow", "hey hey", "👋👋👋", "hii {n} 💕", "wha yuh seh", "finally mi ketch yuh live", "hiiii"], "thanks": ["no worries!!", "anytime 💕", "wouldn't miss it", "always here for you", "❤️❤️", "you deserve it", "love you {n}", "thank YOU"], "follow": ["followed!!", "just followed 🙌", "done ✅", "already following", "followed + notifs on", "sharing this now", "sent to the group chat"], "gift": ["sending one now 🌹", "sent you something 👀", "say less", "on it 💸", "here you go {n}"], "generic": ["real", "FR", "LMAOO", "😂😂😂", "so true", "agreed", "haha yes", "no because same", "this ^^", "😭😭", "say it louder", "facts", "W", "lol", "💯"], "hater": ["nobody asked 💀", "ok and?", "ratio", "be serious", "who cares", "L take", "mid", "sure mate"], "flirty": ["anything for you 😍", "stop i'm blushing", "say my name next 😳", "😍😍", "you're so cute when you talk", "marry me"], "hype": ["LET'S GO", "🔥🔥🔥", "YESSIR", "goated", "absolute legend 👑", "say it again!!"], "where": ["kingston", "montego bay", "spanish town", "mandeville", "ocho rios", "portmore", "negril", "may pen", "st ann", "clarendon", "westmoreland", "london 🇬🇧", "toronto 🇨🇦", "new york 🗽", "florida", "same city as you 👀"]}};
 var FANKEY={us:"en",uk:"en-GB",ng:"en-NG",au:"en-AU",ie:"en-IE",ca:"en-CA","in":"en-IN",za:"en-ZA",jm:"en-JM"};
-function fanList(){var f=S.fans;if(typeof f==="string")f=f==="auto"?[]:[f];if(!Array.isArray(f))f=[];return f.slice(0,3)}
+function fanList(){var f=S.fans;if(typeof f==="string")f=f==="auto"?[]:[f];if(!Array.isArray(f))f=[];if(FREE)f=f.filter(function(k){return FANS_EN[k]});return f.slice(0,3)}
 function uniqCat(arrs){var o=[],seen={};arrs.forEach(function(a){(a||[]).forEach(function(x){if(!seen[x]){seen[x]=1;o.push(x)}})});return o}
 function setAud(){
   if(!AUD0)AUD0={L:LINES,J:JOINS,N:NAMED,R:REPLY,P:PRE,S:SUF};
   var ks=fanList().map(function(k){return FANKEY[k]||k}).filter(function(k){return k==="en"||AUD[k]});
-  if(!ks.length)ks=[LANG];
+  if(!ks.length)ks=[FREE?"en":LANG];
   var ds=ks.map(function(k){return k==="en"?AUD0:AUD[k]});
   var a=ds[0];
   if(ds.length>1){
@@ -2164,6 +2264,129 @@ function applyLang(){
   LANGS.forEach(function(l){var o=document.createElement("option");o.value=l[0];o.textContent=l[1];s.appendChild(o)});
   s.addEventListener("change",function(){S.lang=this.value;LANG=this.value;save();applyLang()});
 })();
+
+/* =============== FREE PLAN =============== */
+function drawMark(x,W,H,u){
+  x.save();
+  var cx=W/2,cy=H/2,bw=330*u,bh=104*u;
+  x.globalAlpha=1;x.fillStyle="rgba(0,0,0,.28)";rrect(x,0,cx-bw/2,cy-bh/2,bw,bh,22*u);x.fill();
+  x.textAlign="center";x.textBaseline="alphabetic";x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=4*u;
+  x.fillStyle="rgba(255,255,255,.66)";
+  x.font="600 "+16*u+"px system-ui,sans-serif";x.fillText("MADE WITH",cx,cy-22*u);
+  x.font="400 "+38*u+"px Anton,'Arial Narrow',Impact,sans-serif";x.fillText("FAKE FAMOUS",cx,cy+18*u);
+  x.font="600 "+16*u+"px system-ui,sans-serif";x.fillText("fakefamous.online",cx,cy+40*u);
+  x.restore();
+}
+function startPlanTimers(){
+  endWhy="";
+  $("freeMark").classList.toggle("hide",!FREE);
+  if(FREE){
+    var secs=(TICKET&&TICKET.seconds)||PLAN.seconds||60,t0=Date.now(),el=$("freeTimer");
+    el.classList.remove("hide","warn");
+    (function tick(){
+      if(!live)return;
+      var left=Math.ceil(secs-(Date.now()-t0)/1000);
+      el.textContent="FREE · "+clock(left);
+      el.classList.toggle("warn",left<=10);
+      if(left<=0){endWhy="time";endLive();return}
+      freeTimer=setTimeout(tick,250);
+    })();
+  }
+  if(TICKET&&TICKET.id){
+    var id=TICKET.id;
+    beatTimer=setInterval(function(){
+      fetch("/api/stream/beat",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:id})})
+        .then(function(r){return r.json()})
+        .then(function(d){if(d&&d.end&&live){endWhy=d.reason||"server";endLive()}})
+        .catch(function(){});
+    },8000);
+  }
+}
+function stopPlanTimers(){
+  clearTimeout(freeTimer);clearInterval(beatTimer);freeTimer=null;beatTimer=null;
+  $("freeTimer").classList.add("hide");$("freeMark").classList.add("hide");
+}
+function li(ul,t){var e=document.createElement("li");e.textContent=t;ul.appendChild(e)}
+function paintEndUp(){
+  var box=$("endUp"),why=endWhy;box.innerHTML="";TICKET=null;
+  if(why==="elsewhere"){var p=document.createElement("p");p.className="st";p.textContent="This stream ended because your account went live on another device.";box.appendChild(p)}
+  if(!FREE){box.classList.toggle("hide",why!=="elsewhere");return}
+  box.classList.remove("hide");
+  var h=document.createElement("div");h.className="uph";
+  h.textContent=why==="time"?((PLAN.seconds||60)===60?"Your free minute is up. Keep the crowd going?":"Your free stream is over. Keep the crowd going?"):"Want the full show?";
+  var ul=document.createElement("ul");
+  li(ul,"Streams with no time limit");li(ul,"No watermark, HD recordings");li(ul,"All 12 languages, scripts and presets");
+  var a=document.createElement("a");a.className="gopro";a.href="/?upgrade=1#pricing";a.textContent="Get Pro · €3.99 a month";
+  var l=document.createElement("p");l.className="left";l.textContent=leftText();
+  box.appendChild(h);box.appendChild(ul);box.appendChild(a);box.appendChild(l);
+}
+var UPS={
+  limit:["You've used today's free streams","Free gives you "+(PLAN.limit||2)+" streams a day. Go Pro to stream as much as you like, right now."],
+  network:["Free streams are used up here today","This network has used all of today's free streams. Go Pro to keep streaming."],
+  lang:["More languages are on Pro","Free fans chat in English. Pro unlocks fans in all 12 languages."],
+  script:["Scripted comments are on Pro","Plan exactly what your fans say and when, with Pro."],
+  timeline:["The stream timeline is on Pro","Schedule gifts, waves and comments ahead of time with Pro."],
+  preset:["Saved presets are on Pro","Save each setup and load it in one tap with Pro."],
+  plan:["Go Pro","No time limit, no watermark, every language and all the tools."]
+};
+function showUpsell(k){
+  var c=UPS[k]||UPS.plan;
+  $("upT").textContent=c[0];$("upSub").textContent=c[1];$("upLeft").textContent=FREE?leftText():"";
+  $("upsell").classList.add("on");
+}
+$("upLater").addEventListener("click",function(){$("upsell").classList.remove("on")});
+$("upsell").addEventListener("click",function(e){if(e.target===this)this.classList.remove("on")});
+function paintPlan(){
+  var b=$("planBar");
+  if(!FREE){b.classList.add("hide");return}
+  b.classList.remove("hide");b.innerHTML="";
+  var t=document.createElement("div");t.className="t";
+  var bb=document.createElement("b");bb.textContent="Free plan";t.appendChild(bb);
+  var sp=document.createElement("span");
+  sp.textContent=" · "+(PLAN.left==null?PLAN.limit+" streams a day":(PLAN.left+" of "+PLAN.limit+" streams left today"))+" · "+(PLAN.seconds||60)+"s each, watermarked";
+  t.appendChild(sp);
+  var btn=document.createElement("button");btn.type="button";btn.textContent="Get Pro";btn.onclick=goPro;
+  b.appendChild(t);b.appendChild(btn);
+}
+function lockRow(el,kind){
+  if(!el)return;el.classList.add("prorow");
+  el.querySelectorAll("textarea,input,select,button").forEach(function(c){c.disabled=true});
+  el.addEventListener("click",function(e){e.preventDefault();showUpsell(kind)});
+}
+if(FREE){
+  lockRow($("scriptIn").closest(".setrow"),"script");
+  lockRow($("tlRow"),"timeline");
+  lockRow($("presetName").closest(".setrow"),"preset");
+  $("fansChips").addEventListener("click",function(e){var b=e.target.closest(".prolock");if(b){e.stopImmediatePropagation();showUpsell("lang")}},true);
+}
+paintPlan();
+/* Keep the page in step with the server: a changed plan (e.g. just upgraded) reloads the right version. */
+function syncPlan(force){
+  return fetch("/api/me"+(force?"?refresh=1":""),{credentials:"same-origin",cache:"no-store"})
+    .then(function(r){if(r.status===401){location.href="/login?next=%2Fapp%2F";return null}return r.json()})
+    .then(function(d){
+      if(!d)return null;
+      if((d.plan==="pro")===FREE){
+        var n=0;try{n=+sessionStorage.getItem("ff_reload")||0;sessionStorage.setItem("ff_reload",n+1)}catch(e){}
+        if(n<3){location.replace("/app/");return d}
+      }
+      try{sessionStorage.removeItem("ff_reload")}catch(e){}
+      if(FREE){PLAN.left=d.left;PLAN.limit=d.limit||PLAN.limit;paintPlan()}
+      return d;
+    }).catch(function(){return null});
+}
+(function(){
+  var q=new URLSearchParams(location.search);
+  if(q.get("welcome")&&FREE){
+    /* Just paid: Paddle can take a few seconds to confirm. Check a few times. */
+    ffToast("Activating Pro…",30000);var tries=0;
+    (function poll(){syncPlan(true).then(function(d){if(d&&d.plan==="pro")return;if(++tries<8)setTimeout(poll,4000);else ffToast("Still on Free. If you paid, sign in with the email you used at checkout.",8000)})})();
+  }else{
+    if(q.get("welcome")&&!FREE)ffToast("You're Pro now. Enjoy!",4000);
+    syncPlan(false);
+  }
+})();
+
 applyLang();
 })();
 </script>

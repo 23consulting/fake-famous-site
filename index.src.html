@@ -64,7 +64,8 @@ a{color:inherit}
 .top{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:80px}
 .mark{white-space:nowrap;flex:0 1 auto;min-width:0;font-family:var(--display);font-size:44px;line-height:1;text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
-.mark b{font-weight:400;color:var(--brand)}
+.mark b{font-weight:400;color:#fff}
+.mark span{background:linear-gradient(90deg,#EF2D47,#FF8812);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .mark small{display:block;font:500 11px var(--body);text-transform:none;letter-spacing:0;color:var(--mute);margin-top:4px}
 .nav{flex:none;display:flex;align-items:center;gap:26px;font-weight:600;font-size:15px}
 .nav a{text-decoration:none;color:var(--mute)}
@@ -395,7 +396,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
 
 <header class="top">
   <div class="wrap bar">
-    <a class="mark" href="#top" aria-label="Fake Famous home"><b>Fake</b> Famous</a>
+    <a class="mark" href="#top" aria-label="Fake Famous home"><b>Fake</b> <span>Famous</span></a>
     <nav class="nav" aria-label="Main">
       <a class="link" href="#features">Features</a>
       <a class="link" href="#pricing">Pricing</a>
@@ -640,7 +641,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
 
 <footer>
   <div class="wrap">
-    <a class="mark" href="#top"><b>Fake</b> Famous</a>
+    <a class="mark" href="#top"><b>Fake</b> <span>Famous</span></a>
     <nav aria-label="Legal">
       <a href="privacy.html">Privacy policy</a>
       <a href="terms.html">Terms of service</a>

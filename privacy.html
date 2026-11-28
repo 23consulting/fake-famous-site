@@ -19,7 +19,8 @@ a{color:#fff}a:hover{color:#FF8812}
 .top{position:sticky;top:0;z-index:5;background:rgba(0,0,0,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:14px;height:80px;max-width:1200px}
 .mark{white-space:nowrap;min-width:0;flex:0 1 auto;font:400 44px/1 'Anton','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,sans-serif;text-transform:uppercase;text-decoration:none;color:#fff}
-.mark b{font-weight:400;color:var(--brand)}
+.mark b{font-weight:400;color:#fff}
+.mark span{background:linear-gradient(90deg,#EF2D47,#FF8812);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .back{white-space:nowrap;font-weight:600;font-size:15px;color:var(--mute);text-decoration:none}
 h1{font:400 clamp(40px,7vw,64px)/1.02 'Anton','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,sans-serif;text-transform:uppercase;margin:56px 0 12px}
 .meta{color:var(--dim);font-size:14px;margin:0 0 28px}
@@ -38,11 +39,11 @@ footer{margin-top:64px;padding:28px 0 56px;border-top:1px solid var(--line);font
 footer nav{display:flex;flex-wrap:wrap;gap:6px 22px;margin-bottom:12px}
 footer a{color:var(--mute);font-weight:600}
 @media (max-width:600px){.bar{height:66px}.mark{font-size:clamp(24px,8.8vw,34px)}}
-@media print{.top{position:static}body{background:#fff;color:#000}p,li,td{color:#222}h1,h2,strong,th{color:#000}}
+@media print{.mark span{background:none;color:#EF2D47;-webkit-text-fill-color:#EF2D47}.top{position:static}body{background:#fff;color:#000}p,li,td{color:#222}h1,h2,strong,th{color:#000}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap bar"><a class="mark" href="index.html"><b>Fake</b> Famous</a><a class="back" href="index.html">Back to site</a></div></header>
+<header class="top"><div class="wrap bar"><a class="mark" href="index.html"><b>Fake</b> <span>Famous</span></a><a class="back" href="index.html">Back to site</a></div></header>
 <main class="wrap">
 <h1>Privacy policy</h1>
 <p class="meta">Effective 24 November 2026 · Last updated 24 November 2026</p>

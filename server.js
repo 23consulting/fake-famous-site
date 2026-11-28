@@ -318,7 +318,7 @@ async function sendCodeEmail(to, code) {
   if (!key) throw new Error('RESEND_API_KEY not set');
   const from = process.env.MAIL_FROM || 'Fake Famous <login@fakefamous.online>';
   const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#000;color:#fff;padding:32px;border-radius:16px;max-width:420px">
-<div style="font-size:22px;font-weight:800;letter-spacing:.5px">FAKE FAMOUS</div>
+<div style="font-size:22px;font-weight:800;letter-spacing:.5px">FAKE <span style="color:#F0284A">FAMOUS</span></div>
 <p style="color:rgba(255,255,255,.7);font-size:15px">Your sign-in code:</p>
 <div style="font-size:36px;font-weight:800;letter-spacing:8px;margin:8px 0 16px">${code}</div>
 <p style="color:rgba(255,255,255,.5);font-size:13px">It expires in 10 minutes. If you didn't ask for this, you can ignore this email.</p></div>`;

@@ -42,7 +42,7 @@
   --green:#1FC27E;
   --blue:#1D9BF0;
   --grad:linear-gradient(90deg,#EF2D47,#FF8812);
-  --display:'Anton','Arial Narrow',Impact,sans-serif;
+  --display:'Anton','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,sans-serif;
   --body:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --gutter:clamp(16px,4vw,40px);
   color-scheme:dark;
@@ -63,16 +63,16 @@ a{color:inherit}
 /* Header */
 .top{position:sticky;top:0;z-index:30;background:rgba(0,0,0,.78);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:80px}
-.mark{font-family:var(--display);font-size:44px;line-height:1;text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
+.mark{white-space:nowrap;flex:0 1 auto;min-width:0;font-family:var(--display);font-size:44px;line-height:1;text-decoration:none;letter-spacing:.01em;text-transform:uppercase}
 .mark b{font-weight:400;color:var(--brand)}
 .mark small{display:block;font:500 11px var(--body);text-transform:none;letter-spacing:0;color:var(--mute);margin-top:4px}
-.nav{display:flex;align-items:center;gap:26px;font-weight:600;font-size:15px}
+.nav{flex:none;display:flex;align-items:center;gap:26px;font-weight:600;font-size:15px}
 .nav a{text-decoration:none;color:var(--mute)}
 .nav a:hover{color:var(--text)}
 @media (max-width:760px){.nav .link{display:none}}
 
 /* Buttons: white pills like the app, gradient for the main action */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 16px/1 var(--body);min-height:52px;padding:0 28px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;transition:transform .15s,filter .15s}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 16px/1 var(--body);min-height:52px;padding:0 28px;border-radius:999px;border:0;cursor:pointer;text-decoration:none;transition:transform .15s,filter .15s}
 @media (hover:hover){.btn:hover{transform:translateY(-2px)}}
 .btn.white{background:#fff;color:#111}
 .btn.grad{background:var(--grad);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 12px 28px -10px rgba(240,40,74,.7)}
@@ -367,8 +367,9 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
   .pbox{padding:22px 18px}
   .finale h2{font-size:clamp(38px,11.5vw,56px)}
   .finale .cta-row .btn{flex:1 1 100%}
-  .bar{height:66px}
-  .mark{font-size:34px}
+  .bar{height:66px;gap:10px}
+  .mark{font-size:clamp(24px,8.8vw,34px)}
+  .nav .btn.small{padding:0 16px}
   footer nav{gap:10px 20px}
   .bubble{min-height:84px;padding:18px}
 }
@@ -480,7 +481,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       </section>
 
       <section class="block">
-          <div class="copy"><h2>12 languages</h2><p>Your fake fans chat in the language you choose. Tap one and the phone switches with it. All 12 are included with Pro.</p></div>
+          <div class="copy"><h2>12 languages</h2><p>Your fake fans chat in the language you choose. Tap one and the phone switches with it. All 12 are included with Pro, and new languages are being added weekly.</p></div>
           <div class="panel pad">
           <div class="langs" id="langs" role="group" aria-label="Chat language"></div>
           <div class="bubble" id="bubble"></div>
@@ -576,7 +577,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
           <ul class="list">
             <li>2 streams a day, 60 seconds each</li>
             <li>Both layouts and every crowd tone</li>
-            <li>English-speaking fans</li>
+            <li>US English fans</li>
             <li>Recordings in 480p with a Fake Famous watermark</li>
             <li class="off">Scripted comments and timeline</li>
             <li class="off">Saved presets</li>
@@ -596,7 +597,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
           <ul class="list">
             <li>Streams with no time limit</li>
             <li>Up to 36K viewers</li>
-            <li>All 12 languages</li>
+            <li>All 12 languages and every English accent, with new languages added weekly</li>
             <li>Recordings without a watermark</li>
             <li>Scripted comments and timeline</li>
             <li>Saved presets</li>
@@ -615,7 +616,7 @@ dialog .row2{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
       <h2>Questions</h2>
       <div class="faq">
         <details><summary>How much does it cost?</summary><p>Fake Famous is free to try: 2 streams a day, 60 seconds each, with a watermark. Pro is €3.99 a month or €25.99 a year. You pay at checkout, get full access straight away, and the plan renews automatically until you cancel.</p></details>
-        <details><summary>What do I get on the free plan?</summary><p>Two streams a day of up to 60 seconds, both layouts, every crowd tone and English-speaking fans. Free streams and recordings carry a Fake Famous watermark. Pro removes the time limit and watermark, records in HD and unlocks all 12 languages, scripted comments, the timeline and saved presets.</p></details>
+        <details><summary>What do I get on the free plan?</summary><p>Two streams a day of up to 60 seconds, both layouts, every crowd tone and US English fans. Free streams and recordings carry a Fake Famous watermark. Pro removes the time limit and watermark, records in HD and unlocks all 12 languages, scripted comments, the timeline and saved presets.</p></details>
         <details><summary>Is anything actually broadcast?</summary><p>No. Fake Famous shows a simulated live screen on your own device. Nothing goes to any social media platform, and no real people are watching.</p></details>
         <details><summary>Does it work on my phone?</summary><p>Yes. It runs in your browser on iPhone, Android and desktop. Add it to your home screen for a full-screen view.</p></details>
         <details><summary>Can I post the recording?</summary><p>Recordings are yours to download. Use them for fun, skits and practice. If you share one, make clear it's a simulation and follow the rules of the platform you post on.</p></details>
@@ -1121,6 +1122,18 @@ if (matchMedia('(max-width:760px)').matches) setLayout('tt');
 })();
 for (let i = 0; i < 5; i++) say();
 loop();
+})();
+</script>
+<script>
+/* Keep the logo on one line next to the header button: shrink it if the phone shows a wider font
+   (Firefox on Android has no narrow backup font while the title font loads, or if it fails). */
+(function(){
+  var m=document.querySelector('.top .mark');if(!m)return;
+  function fit(){m.style.fontSize='';var fs=parseFloat(getComputedStyle(m).fontSize);
+    while(m.scrollWidth>m.clientWidth+1&&fs>14){fs-=1;m.style.fontSize=fs+'px'}}
+  fit();addEventListener('resize',fit);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  addEventListener('load',fit);
 })();
 </script>
 </body>

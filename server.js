@@ -463,7 +463,7 @@ async function streamBeat(req, res) {
 }
 
 /* ---------------- the app ---------------- */
-// The free app is a different file from the Pro app: the paid-only audience languages are removed
+// The free app is a different file from the Pro app: every audience pack except US English is removed
 // before it leaves the server, so they can't be switched on from the browser.
 let appCache = null;
 function appHtml(plan, email) {
@@ -471,7 +471,7 @@ function appHtml(plan, email) {
   const mtime = fs.statSync(file).mtimeMs;
   if (!appCache || appCache.mtime !== mtime) {
     const pro = fs.readFileSync(file, 'utf8');
-    const free = pro.replace(/^var AUD=\{"es":.*$/m, 'var AUD={};');
+    const free = pro.replace(/^var AUD=\{"es":.*$/m, 'var AUD={};').replace(/^AUD\["en-[A-Z]+"\]=.*$/gm, '');
     if (free === pro) console.warn('WARNING: could not strip paid languages from the free app build.');
     appCache = { mtime, pro, free };
   }

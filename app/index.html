@@ -838,7 +838,7 @@ svg{display:block}
 <div id="upsell" role="dialog" aria-modal="true" aria-labelledby="upT" data-dyn><div class="box">
   <h3 id="upT"></h3>
   <p class="sub" id="upSub"></p>
-  <ul><li>Streams with no time limit</li><li>No watermark, HD recordings</li><li>All 12 languages</li><li>Scripted comments, timeline and saved presets</li></ul>
+  <ul><li>Streams with no time limit</li><li>No watermark, HD recordings</li><li>All 12 languages and every English accent, with new languages added weekly</li><li>Scripted comments, timeline and saved presets</li></ul>
   <a class="gopro" href="/?upgrade=1#pricing">Get Pro</a>
   <p class="price">€3.99 a month or €25.99 a year. Cancel any time.</p>
   <p class="left" id="upLeft"></p>
@@ -906,7 +906,7 @@ function save(){try{localStorage.setItem("golive.v2",JSON.stringify(S))}catch(e)
    Nothing here can grant Pro or extra free streams; it only shows the right screens. */
 var PLAN=window.FF_PLAN||{plan:"free",seconds:60,limit:2};
 var FREE=PLAN.plan!=="pro";
-var FANS_EN={us:1,uk:1,au:1,ie:1,ca:1,"in":1,za:1,jm:1,ng:1};
+var FANS_EN={us:1}; /* the free plan has US English fans only */
 if(FREE){
   if(Array.isArray(S.fans))S.fans=S.fans.filter(function(k){return FANS_EN[k]});
   else if(S.fans&&S.fans!=="auto"&&!FANS_EN[S.fans])S.fans=[];
@@ -2315,7 +2315,7 @@ function paintEndUp(){
   var h=document.createElement("div");h.className="uph";
   h.textContent=why==="time"?((PLAN.seconds||60)===60?"Your free minute is up. Keep the crowd going?":"Your free stream is over. Keep the crowd going?"):"Want the full show?";
   var ul=document.createElement("ul");
-  li(ul,"Streams with no time limit");li(ul,"No watermark, HD recordings");li(ul,"All 12 languages, scripts and presets");
+  li(ul,"Streams with no time limit");li(ul,"No watermark, HD recordings");li(ul,"All 12 languages and every English accent, with new ones added weekly");li(ul,"Scripted comments, timeline and presets");
   var a=document.createElement("a");a.className="gopro";a.href="/?upgrade=1#pricing";a.textContent="Get Pro · €3.99 a month";
   var l=document.createElement("p");l.className="left";l.textContent=leftText();
   box.appendChild(h);box.appendChild(ul);box.appendChild(a);box.appendChild(l);
@@ -2323,7 +2323,7 @@ function paintEndUp(){
 var UPS={
   limit:["You've used today's free streams","Free gives you "+(PLAN.limit||2)+" streams a day. Go Pro to stream as much as you like, right now."],
   network:["Free streams are used up here today","This network has used all of today's free streams. Go Pro to keep streaming."],
-  lang:["More languages are on Pro","Free fans chat in English. Pro unlocks fans in all 12 languages."],
+  lang:["More languages are on Pro","Free fans chat in US English. Pro unlocks all 12 languages and every English accent, and new languages are being added weekly."],
   script:["Scripted comments are on Pro","Plan exactly what your fans say and when, with Pro."],
   timeline:["The stream timeline is on Pro","Schedule gifts, waves and comments ahead of time with Pro."],
   preset:["Saved presets are on Pro","Save each setup and load it in one tap with Pro."],

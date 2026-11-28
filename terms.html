@@ -17,11 +17,11 @@ a{color:#fff}a:hover{color:#FF8812}
 :focus-visible{outline:3px solid #FF8812;outline-offset:3px;border-radius:6px}
 .wrap{max-width:760px;margin:0 auto;padding:0 clamp(16px,4vw,32px)}
 .top{position:sticky;top:0;z-index:5;background:rgba(0,0,0,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;height:80px;max-width:1200px}
-.mark{font:400 44px/1 'Anton','Arial Narrow',Impact,sans-serif;text-transform:uppercase;text-decoration:none;color:#fff}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:14px;height:80px;max-width:1200px}
+.mark{white-space:nowrap;min-width:0;flex:0 1 auto;font:400 44px/1 'Anton','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,sans-serif;text-transform:uppercase;text-decoration:none;color:#fff}
 .mark b{font-weight:400;color:var(--brand)}
-.back{font-weight:600;font-size:15px;color:var(--mute);text-decoration:none}
-h1{font:400 clamp(40px,7vw,64px)/1.02 'Anton','Arial Narrow',Impact,sans-serif;text-transform:uppercase;margin:56px 0 12px}
+.back{white-space:nowrap;font-weight:600;font-size:15px;color:var(--mute);text-decoration:none}
+h1{font:400 clamp(40px,7vw,64px)/1.02 'Anton','Arial Narrow','Roboto Condensed',sans-serif-condensed,Impact,sans-serif;text-transform:uppercase;margin:56px 0 12px}
 .meta{color:var(--dim);font-size:14px;margin:0 0 28px}
 .summary{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 22px;margin:0 0 36px}
 .summary p{margin:0;color:var(--mute)}
@@ -37,7 +37,7 @@ mark.fill{background:rgba(255,136,18,.18);color:#FFB061;border-radius:4px;paddin
 footer{margin-top:64px;padding:28px 0 56px;border-top:1px solid var(--line);font-size:14px;color:var(--dim)}
 footer nav{display:flex;flex-wrap:wrap;gap:6px 22px;margin-bottom:12px}
 footer a{color:var(--mute);font-weight:600}
-@media (max-width:600px){.bar{height:66px}.mark{font-size:34px}}
+@media (max-width:600px){.bar{height:66px}.mark{font-size:clamp(24px,8.8vw,34px)}}
 @media print{.top{position:static}body{background:#fff;color:#000}p,li,td{color:#222}h1,h2,strong,th{color:#000}}
 </style>
 </head>
@@ -59,7 +59,7 @@ footer a{color:var(--mute);font-weight:600}
 <p>Fake Famous shows a simulated livestream screen on your own device, with a computer-generated audience, comments, gifts and viewer counts. <strong>Nothing is broadcast to any platform, and no real viewers are involved.</strong> The Service is for entertainment, comedy, skits and practice. It is not affiliated with or endorsed by any social media platform; the live screens are original designs and layout names only describe the style of screen.</p>
 
 <h2>4. Free plan</h2>
-<p>You can use Fake Famous for free after signing in with your email. The free plan includes 2 streams a day of up to 60 seconds each, English-speaking fans, and recordings in 480p. Free streams and recordings show a Fake Famous watermark, and some features are only on Pro. We count free streams per account and per network, and limit how many free accounts can be created from one network or device each day.</p>
+<p>You can use Fake Famous for free after signing in with your email. The free plan includes 2 streams a day of up to 60 seconds each, US English fans, and recordings in 480p. Free streams and recordings show a Fake Famous watermark, and some features are only on Pro. We count free streams per account and per network, and limit how many free accounts can be created from one network or device each day.</p>
 <p>Don't try to get around these limits, for example by creating extra accounts, using temporary email addresses, or changing the app's code. We may block accounts that do. We may change the free plan at any time.</p>
 
 <h2>4a. Pro: ordering and payment</h2>
@@ -118,5 +118,17 @@ footer a{color:var(--mute);font-weight:600}
 <nav aria-label="Legal"><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms of service</a><a href="refunds.html">Refund policy</a><a href="mailto:support@fakefamous.online">support@fakefamous.online</a></nav>
 <p>Fake Famous is operated by 23 Consulting LLC. Payments are processed by Paddle.com, our merchant of record.</p>
 </div></footer>
+<script>
+/* Keep the logo on one line next to the header button: shrink it if the phone shows a wider font
+   (Firefox on Android has no narrow backup font while the title font loads, or if it fails). */
+(function(){
+  var m=document.querySelector('.top .mark');if(!m)return;
+  function fit(){m.style.fontSize='';var fs=parseFloat(getComputedStyle(m).fontSize);
+    while(m.scrollWidth>m.clientWidth+1&&fs>14){fs-=1;m.style.fontSize=fs+'px'}}
+  fit();addEventListener('resize',fit);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+  addEventListener('load',fit);
+})();
+</script>
 </body>
 </html>
